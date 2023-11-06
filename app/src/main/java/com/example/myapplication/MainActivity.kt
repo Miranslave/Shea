@@ -41,10 +41,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun request(){
-        val bouton: Button = findViewById(R.id.button)
-        bouton.setOnClickListener{
 
-        }
     }
 
    //Fonction basique qui permet d'appeler l'API en dur pour obtenir le JSon du HOME
