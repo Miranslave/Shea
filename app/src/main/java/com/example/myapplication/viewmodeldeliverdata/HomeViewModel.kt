@@ -23,8 +23,8 @@ class HomeViewModel : ViewModel(){
     private fun getHome(){
         viewModelScope.launch {
             try{
-             val currentText = WebtoonApi.retrofitService.getSearch()
-                Log.d("TEST",currentText.toString())
+             val currentText = WebtoonApi.retrofitService.getTitleInfo()
+                Log.d("Success",currentText.toString())
             _status.value = "Success: $currentText"
             }
         catch (e: Exception){
