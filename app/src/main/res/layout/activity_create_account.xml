@@ -9,17 +9,20 @@
     tools:context=".MainActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.781"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.031">
 
         <ImageView
             android:id="@+id/logo"
-            android:layout_width="207dp"
+            android:layout_width="0dp"
             android:layout_height="179dp"
             android:layout_marginTop="24dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -33,10 +36,10 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
             android:fontFamily="@font/syncopate"
-            android:text="Connexion"
+            android:text="Créer un compte"
             android:textAlignment="center"
             android:textColor="@color/main_dark_blue"
-            android:textSize="40sp"
+            android:textSize="28sp"
             android:textStyle="bold"
             android:typeface="normal"
             app:layout_constraintEnd_toEndOf="parent"
@@ -63,57 +66,55 @@
             android:id="@+id/mailAddress"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:ems="10"
-            android:hint="Mail"
+            android:ems="20"
+            android:hint="Addresse mail"
             android:inputType="textEmailAddress"
             android:textColorHint="@color/main_dark_blue"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_min="48dp"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/titleText" />
+            app:layout_constraintTop_toBottomOf="@+id/username" />
 
         <EditText
             android:id="@+id/password"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:ems="10"
-            android:hint="Password"
+            android:ems="20"
+            android:hint="Mot de passe"
             android:inputType="textPassword"
             android:textColorHint="@color/main_dark_blue"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_min="48dp"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/mailAddress" />
 
-        <Button
-            android:id="@+id/button"
+        <EditText
+            android:id="@+id/username"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:ems="20"
+            android:hint="Pseudo"
+            android:inputType="textEmailAddress"
+            android:textColorHint="@color/main_dark_blue"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_min="48dp"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/titleText" />
+
+        <TextView
+            android:id="@+id/createAccountButton2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:backgroundTint="@color/white"
-            android:text="Créer un compte"
-            android:textColorHighlight="@color/main_orange"
-            android:textColorLink="@color/white"
+            android:autoLink="web"
+            android:text="J'ai déjà un compte"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
-        <Button
-            android:id="@+id/connectionButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:background="@color/white"
-            android:backgroundTint="@color/white"
-            android:text="Se connecter"
-            android:textColorHighlight="@color/main_orange"
-            android:textColorLink="@color/white"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/password" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
