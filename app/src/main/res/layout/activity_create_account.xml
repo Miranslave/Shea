@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F6DEB8"
-    tools:context=".MainActivity">
+    tools:context=".LoginActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
@@ -44,10 +44,10 @@
             android:typeface="normal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/titleText2" />
+            app:layout_constraintTop_toBottomOf="@+id/descriptionText" />
 
         <TextView
-            android:id="@+id/titleText2"
+            android:id="@+id/descriptionText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
@@ -74,10 +74,10 @@
             app:layout_constraintHeight_min="48dp"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/username" />
+            app:layout_constraintTop_toBottomOf="@+id/usernameInput" />
 
         <EditText
-            android:id="@+id/password"
+            android:id="@+id/passwordInput"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:ems="20"
@@ -91,7 +91,7 @@
             app:layout_constraintTop_toBottomOf="@+id/mailAddress" />
 
         <EditText
-            android:id="@+id/username"
+            android:id="@+id/usernameInput"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
@@ -106,11 +106,14 @@
             app:layout_constraintTop_toBottomOf="@+id/titleText" />
 
         <TextView
-            android:id="@+id/createAccountButton2"
+            android:id="@+id/loginButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:autoLink="web"
             android:text="J'ai déjà un compte"
+            android:textColor="@color/main_light_blue"
+            android:textSize="16sp"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

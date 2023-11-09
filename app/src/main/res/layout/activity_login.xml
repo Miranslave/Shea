@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F6DEB8"
-    tools:context=".MainActivity">
+    tools:context=".LoginActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -42,10 +42,10 @@
             android:typeface="normal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/titleText2" />
+            app:layout_constraintTop_toBottomOf="@+id/descriptionText" />
 
         <TextView
-            android:id="@+id/titleText2"
+            android:id="@+id/descriptionText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
@@ -75,7 +75,7 @@
             app:layout_constraintTop_toBottomOf="@+id/titleText" />
 
         <EditText
-            android:id="@+id/password"
+            android:id="@+id/passwordInput"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -101,7 +101,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/password" />
+            app:layout_constraintTop_toBottomOf="@+id/passwordInput" />
 
         <TextView
             android:id="@+id/createAccountButton"
@@ -109,6 +109,9 @@
             android:layout_height="wrap_content"
             android:autoLink="web"
             android:text="Je veux créer un compte"
+            android:textColor="@color/main_light_blue"
+            android:textSize="16sp"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
