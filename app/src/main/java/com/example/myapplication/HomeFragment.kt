@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), OnItemClickListener {
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var viewManager: RecyclerView.LayoutManager
@@ -19,7 +19,7 @@ class HomeFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
 
         viewManager = GridLayoutManager(context, 2)
-        viewAdapter = WebtoonFoldersListAdapter(getMyData())
+        viewAdapter = WebtoonFoldersListAdapter(getMyData(), this)
 
         recyclerView = view.findViewById<RecyclerView>(R.id.homeItemsList).apply {
             setHasFixedSize(true)
@@ -42,5 +42,11 @@ class HomeFragment : Fragment() {
             "Science-fiction",
             "Tranche de vie"
         )
+    }
+
+    // Change page when click on a folder
+    override fun onItemClick(position: Int) {
+        println("Clicked on $position")
+//        (activity as? BaseActivity)?.changeFragment(YourFragment())
     }
 }

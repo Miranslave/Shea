@@ -36,15 +36,12 @@ class BaseActivity : AppCompatActivity() {
         // Change the title
         findViewById<TextView>(R.id.titleText).text = tab?.get("title") as String
 
-        // Change the fragment
-//        val newFragment = when(id) {
-//            R.id.home_tab -> HomeFragment()
-//            R.id.search_tab -> SearchFragment()
-//            else -> throw IllegalArgumentException("Invalid tab ID")
-//        }
+        changeFragment(tab["fragment"] as Fragment)
+    }
 
+    fun changeFragment(fragment: Fragment) {
         val transaction = supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.home_fragments_container, tab["fragment"] as Fragment)
+        transaction.replace(R.id.home_fragments_container, fragment)
         transaction.addToBackStack(null)
         transaction.commit()
     }
