@@ -33,20 +33,16 @@ class HomeFragment : Fragment(), OnItemClickListener {
     // Give folders name to view
     private fun getMyData(): Array<String> {
         return arrayOf(
-            "Action",
-            "Comédie",
-            "Drame",
-            "Fantastique",
-            "Horreur",
-            "Romance",
-            "Science-fiction",
-            "Tranche de vie"
+            "Action", "Comédie", "Drame", "Fantastique", "Horreur", "Romance", "Science-fiction", "Tranche de vie"
         )
     }
 
     // Change page when click on a folder
-    override fun onItemClick(position: Int) {
-        println("Clicked on $position")
-//        (activity as? BaseActivity)?.changeFragment(YourFragment())
+    override fun onItemClick(folderPos: Int) {
+        println("Clicked on $folderPos")
+
+        val mainActivity = (activity as? BaseActivity)
+        mainActivity?.changeFragment(WebtoonFolderDetailsFragment(folderPos))
+        mainActivity?.changeTitle(getMyData()[folderPos])
     }
 }

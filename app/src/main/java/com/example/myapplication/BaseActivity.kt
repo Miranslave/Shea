@@ -32,10 +32,7 @@ class BaseActivity : AppCompatActivity() {
 
     private fun changeToTab(id: Int) {
         val tab = tabs[id]
-
-        // Change the title
-        findViewById<TextView>(R.id.titleText).text = tab?.get("title") as String
-
+        changeTitle(tab?.get("title") as String)
         changeFragment(tab["fragment"] as Fragment)
     }
 
@@ -44,5 +41,9 @@ class BaseActivity : AppCompatActivity() {
         transaction.replace(R.id.home_fragments_container, fragment)
         transaction.addToBackStack(null)
         transaction.commit()
+    }
+
+    fun changeTitle(title: String) {
+        findViewById<TextView>(R.id.titleText).text = title
     }
 }
