@@ -34,7 +34,7 @@
                 android:text="Titre du dossier" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/fragmentWebtoonFolder_createFolderButton"
+                android:id="@+id/fragmentWebtoonFolder_editTitleButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0"
