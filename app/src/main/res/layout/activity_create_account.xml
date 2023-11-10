@@ -21,7 +21,7 @@
         app:layout_constraintVertical_bias="0.031">
 
         <ImageView
-            android:id="@+id/logo"
+            android:id="@+id/activityBase_logo"
             android:layout_width="0dp"
             android:layout_height="179dp"
             android:layout_marginTop="24dp"
@@ -31,7 +31,7 @@
             app:srcCompat="@drawable/logo" />
 
         <TextView
-            android:id="@+id/titleText"
+            android:id="@+id/activityBase_titleText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
@@ -60,10 +60,10 @@
             android:typeface="normal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/logo" />
+            app:layout_constraintTop_toBottomOf="@+id/activityBase_logo" />
 
         <EditText
-            android:id="@+id/mailAddress"
+            android:id="@+id/createAccountActivity_mailAddress"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:ems="20"
@@ -74,10 +74,10 @@
             app:layout_constraintHeight_min="48dp"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/usernameInput" />
+            app:layout_constraintTop_toBottomOf="@+id/createAccountActivity_username" />
 
         <EditText
-            android:id="@+id/passwordInput"
+            android:id="@+id/createAccountActivity_password"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:ems="20"
@@ -88,10 +88,10 @@
             app:layout_constraintHeight_min="48dp"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/mailAddress" />
+            app:layout_constraintTop_toBottomOf="@+id/createAccountActivity_mailAddress" />
 
         <EditText
-            android:id="@+id/usernameInput"
+            android:id="@+id/createAccountActivity_username"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
@@ -103,13 +103,14 @@
             app:layout_constraintHeight_min="48dp"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/titleText" />
+            app:layout_constraintTop_toBottomOf="@+id/activityBase_titleText" />
 
         <TextView
-            android:id="@+id/loginButton"
+            android:id="@+id/createAccountActivity_loginButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:autoLink="web"
+            android:clickable="true"
             android:text="J'ai déjà un compte"
             android:textColor="@color/main_light_blue"
             android:textSize="16sp"
@@ -117,6 +118,22 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/createAccountActivity_createAccountButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@color/white"
+            android:backgroundTint="@color/white"
+            android:clickable="true"
+            android:text="Créer mon compte"
+            android:textColorHighlight="@color/main_orange"
+            android:textColorLink="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/createAccountActivity_password" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

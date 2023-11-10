@@ -25,7 +25,7 @@ class WebtoonFoldersListAdapter(
 
     // Replace the contents of a view (invoked by the layout manager)
     override fun onBindViewHolder(holder: WebtoonFoldersViewHolder, position: Int) {
-        holder.view.findViewById<TextView>(R.id.folder_name).text = dataset[position]
+        holder.view.findViewById<TextView>(R.id.itemWebtoon_folderName).text = dataset[position]
         holder.itemView.setOnClickListener { listener.onItemClick(position) }
     }
 

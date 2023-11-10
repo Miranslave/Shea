@@ -19,7 +19,7 @@
         app:layout_constraintVertical_bias="1.0">
 
         <ImageView
-            android:id="@+id/logo"
+            android:id="@+id/activityLogin_logo"
             android:layout_width="0dp"
             android:layout_height="179dp"
             android:layout_marginTop="24dp"
@@ -29,7 +29,7 @@
             app:srcCompat="@drawable/logo" />
 
         <TextView
-            android:id="@+id/titleText"
+            android:id="@+id/activityLogin_titleText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
@@ -42,10 +42,10 @@
             android:typeface="normal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/descriptionText" />
+            app:layout_constraintTop_toBottomOf="@+id/activityLogin_descriptionText" />
 
         <TextView
-            android:id="@+id/descriptionText"
+            android:id="@+id/activityLogin_descriptionText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
@@ -58,10 +58,10 @@
             android:typeface="normal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/logo" />
+            app:layout_constraintTop_toBottomOf="@+id/activityLogin_logo" />
 
         <EditText
-            android:id="@+id/mailAddress"
+            android:id="@+id/activityLogin_mailAddress"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -72,10 +72,10 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_min="48dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/titleText" />
+            app:layout_constraintTop_toBottomOf="@+id/activityLogin_titleText" />
 
         <EditText
-            android:id="@+id/passwordInput"
+            android:id="@+id/activityLogin_password"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -86,28 +86,30 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_min="48dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/mailAddress" />
+            app:layout_constraintTop_toBottomOf="@+id/activityLogin_mailAddress" />
 
         <Button
-            android:id="@+id/connectionButton"
+            android:id="@+id/activityLogin_connectionButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:background="@color/white"
             android:backgroundTint="@color/white"
+            android:clickable="true"
             android:text="Se connecter"
             android:textColorHighlight="@color/main_orange"
             android:textColorLink="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/passwordInput" />
+            app:layout_constraintTop_toBottomOf="@+id/activityLogin_password" />
 
         <TextView
-            android:id="@+id/createAccountButton"
+            android:id="@+id/activityLogin_createAccountButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:autoLink="web"
+            android:clickable="true"
             android:text="Je veux créer un compte"
             android:textColor="@color/main_light_blue"
             android:textSize="16sp"

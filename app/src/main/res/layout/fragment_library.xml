@@ -25,7 +25,7 @@
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/settingsItemsList"
+            android:id="@+id/fragmentLibrary_settingsItemsList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingTop="10dp" />

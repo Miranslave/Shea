@@ -5,16 +5,15 @@ import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import kotlin.reflect.typeOf
 
 private val tabs = mapOf(
-    R.id.home_tab to mapOf(
+    R.id.activityBase_homeTab to mapOf(
         "fragment" to HomeFragment(), "title" to "Accueil"
-    ), R.id.search_tab to mapOf(
+    ), R.id.activityBase_searchTab to mapOf(
         "fragment" to SearchFragment(), "title" to "Recherche"
-    ), R.id.library_tab to mapOf(
+    ), R.id.activityBase_libraryTab to mapOf(
         "fragment" to LibraryFragment(), "title" to "Bibliothèque"
-    ), R.id.settings_tab to mapOf(
+    ), R.id.activityBase_settingsTab to mapOf(
         "fragment" to SettingsFragment(), "title" to "Paramètres"
     )
 )
@@ -38,12 +37,12 @@ class BaseActivity : AppCompatActivity() {
 
     fun changeFragment(fragment: Fragment) {
         val transaction = supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.home_fragments_container, fragment)
+        transaction.replace(R.id.activityBase_fragmentsContainer, fragment)
         transaction.addToBackStack(null)
         transaction.commit()
     }
 
     fun changeTitle(title: String) {
-        findViewById<TextView>(R.id.titleText).text = title
+        findViewById<TextView>(R.id.activityBase_titleText).text = title
     }
 }
