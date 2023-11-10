@@ -102,7 +102,7 @@
             android:padding="10dp"
             android:src="@drawable/search"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/menu_tab"
+            app:layout_constraintEnd_toStartOf="@+id/library_tab"
             app:layout_constraintStart_toEndOf="@+id/home_tab"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -113,14 +113,14 @@
             android:layout_marginEnd="294dp"
             android:background="?android:attr/listDivider"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/menu_tab"
+            app:layout_constraintEnd_toStartOf="@+id/library_tab"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/search_tab"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.933" />
 
         <ImageView
-            android:id="@+id/menu_tab"
+            android:id="@+id/library_tab"
             android:layout_width="0dp"
             android:layout_height="45dp"
             android:padding="10dp"
@@ -139,7 +139,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/settings_tab"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@+id/menu_tab"
+            app:layout_constraintStart_toEndOf="@+id/library_tab"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.933" />
 
@@ -151,7 +151,7 @@
             android:src="@drawable/settings"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/menu_tab"
+            app:layout_constraintStart_toEndOf="@+id/library_tab"
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

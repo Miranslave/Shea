@@ -24,13 +24,6 @@
             </SearchView>
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginVertical="5dp"
-            android:text="X résultats" />
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/settingsItemsList"
             android:layout_width="match_parent"
