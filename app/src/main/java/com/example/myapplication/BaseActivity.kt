@@ -17,7 +17,7 @@ private val tabsFragments = mapOf(
     )
 )
 
-class HomeActivity : AppCompatActivity() {
+class BaseActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,7 +37,7 @@ class HomeActivity : AppCompatActivity() {
 
         // Change the fragment
         val transaction = supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.home_fragments_container, tab?.get("fragment") as Fragment)
+        transaction.replace(R.id.home_fragments_container, tab["fragment"] as Fragment)
         transaction.addToBackStack(null)
         transaction.commit()
     }
