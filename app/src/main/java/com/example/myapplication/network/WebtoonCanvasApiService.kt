@@ -39,41 +39,30 @@ interface WebtoonCanvasApiService {
     // Trouver comment mettre avec retrofit2 les paramètres dans l'url
     // comme le string de recherche, la taille des pages
 
+
     //Fonction qui renvoie le JSON qui donne la page home
-    @Headers(
-        "X-RapidAPI-Key: 83abec409emshdaef86121bb4e5ep125787jsnd79326c26832",
-        "X-RapidAPI-Host: webtoon.p.rapidapi.com"
-    )
+    @Headers(XRapidAPIkey, XRapidAPIHostadress)
     @GET("home?language=en")
-    suspend fun getHome(): com.example.myapplication.network.Canvas.Home.RequestHome
+    suspend fun getHome(): RequestHome
 
 
     //Fonction qui renvoie le JSON qui donne la page home
-    @Headers(
-        "X-RapidAPI-Key: 83abec409emshdaef86121bb4e5ep125787jsnd79326c26832",
-        "X-RapidAPI-Host: webtoon.p.rapidapi.com"
-    )
+    @Headers(XRapidAPIkey, XRapidAPIHostadress)
     @GET("search?query=boy%20friend&startIndex=0&pageSize=5&language=en")
     suspend fun getSearch(
         @Query("query") searchquery: String,
         @Query("startIndex") debutpage: Int,
         @Query("pageSize") nbtitles: Int,
         @Query("language") lang: Langage
-    ): com.example.myapplication.network.Canvas.Search.RequestSearch
+    ):RequestSearch
 
-    @Headers(
-        "X-RapidAPI-Key: 83abec409emshdaef86121bb4e5ep125787jsnd79326c26832",
-        "X-RapidAPI-Host: webtoon.p.rapidapi.com"
-    )
+    @Headers(XRapidAPIkey, XRapidAPIHostadress)
     @GET("genres/list")
     suspend fun getGenresList(
         @Query("lang") lang: Langage
     ): RequestGenreList
 
-    @Headers(
-        "X-RapidAPI-Key: 83abec409emshdaef86121bb4e5ep125787jsnd79326c26832",
-        "X-RapidAPI-Host: webtoon.p.rapidapi.com"
-    )
+    @Headers(XRapidAPIkey, XRapidAPIHostadress)
     @GET("titles/list")
     suspend fun getTitlesList(
         //The value of code field returned in …/canvas/genres/list endpoint.
@@ -85,20 +74,15 @@ interface WebtoonCanvasApiService {
         @Query("lang") lang: Langage
     ): RequestTitleList
 
-    @Headers(
-        "X-RapidAPI-Key: 83abec409emshdaef86121bb4e5ep125787jsnd79326c26832",
-        "X-RapidAPI-Host: webtoon.p.rapidapi.com"
-    )
+    @Headers(XRapidAPIkey, XRapidAPIHostadress)
     @GET("titles/get-info")
     suspend fun getTitleInfo(
         @Query("titleNo") titleNo: String,
         @Query("lang") lang: Langage
     ): RequestTitleInfo
 
-    @Headers(
-        "X-RapidAPI-Key: 83abec409emshdaef86121bb4e5ep125787jsnd79326c26832",
-        "X-RapidAPI-Host: webtoon.p.rapidapi.com"
-    )
+    // Optional
+    @Headers(XRapidAPIkey, XRapidAPIHostadress)
     @GET("titles/get-recommend")
     suspend fun getTitleRecommend(
         @Query("titleNo") titleNo: String,

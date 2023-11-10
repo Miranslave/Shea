@@ -13,25 +13,26 @@ import com.example.myapplication.network.language
 import kotlinx.coroutines.launch
 import java.lang.Exception
 
-class HomeViewModel : ViewModel(){
+class HomeViewModel : ViewModel() {
 
+    //initialise la fonction API qui va etre demander et la passe dans notre Viewmodel  une page -> un viewmodel
     init {
-            getHome()
-        }
+        ApiRequest()
+    }
+
     val _status = MutableLiveData<String>()
     val status: LiveData<String> = _status
 
 
-    @SuppressLint("SuspiciousIndentation")
-    private fun getHome(){
+
+    private fun ApiRequest() {
         viewModelScope.launch {
-            try{
-             val currentText = WebtoonOriginalsApi.retrofitService.getTitlesList(Langage.fr)
-                Log.d("Success",currentText.toString())
-            _status.value = "Success: $currentText"
-            }
-        catch (e: Exception){
-            _status.value = "Failure: ${e.message}"
+            try {
+                val currentText = WebtoonOriginalsApi.retrofitService.getTitleInfo(3054, Langage.en)
+                Log.d("Success", currentText.toString())
+                _status.value = "Success: $currentText"
+            } catch (e: Exception) {
+                _status.value = "Failure: ${e.message}"
             }
         }
     }
