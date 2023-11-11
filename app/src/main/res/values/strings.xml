@@ -1,5 +1,7 @@
 <resources>
-    <string name="app_name">My Application</string>
+    <string name="app_name" translatable="false">Shea</string>
+    <string name="title_activity_create_account" translatable="false">CreateAccountActivity</string>
+    <string name="title_activity_home" translatable="false">HomeActivity</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
