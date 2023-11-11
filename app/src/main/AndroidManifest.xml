@@ -13,12 +13,12 @@
         android:theme="@style/Theme.MyApplication"
         tools:targetApi="31">
         <activity
-            android:name=".CreateAccountActivity"
+            android:name=".activities.CreateAccountActivity"
             android:exported="false"
             android:label="@string/title_activity_create_account"
             android:theme="@style/Theme.MyApplication" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".activities.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,7 +27,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".BaseActivity"
+            android:name=".activities.BaseActivity"
             android:exported="false"
             android:label="@string/title_activity_home"
             android:theme="@style/Theme.MyApplication" />

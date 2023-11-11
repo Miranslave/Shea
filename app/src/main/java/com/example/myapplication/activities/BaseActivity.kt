@@ -1,10 +1,15 @@
-package com.example.myapplication
+package com.example.myapplication.activities
 
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import com.example.myapplication.R
+import com.example.myapplication.fragments.HomeFragment
+import com.example.myapplication.fragments.LibraryFragment
+import com.example.myapplication.fragments.SearchFragment
+import com.example.myapplication.fragments.SettingsFragment
 
 private val tabs = mapOf(
     R.id.activityBase_homeTab to mapOf(

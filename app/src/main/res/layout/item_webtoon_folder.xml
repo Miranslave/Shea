@@ -10,18 +10,18 @@
     android:padding="5dp">
 
     <ImageView
-        android:id="@+id/itemWebtoon_image"
+        android:id="@+id/itemFolder_image"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="19dp"
-        app:layout_constraintBottom_toTopOf="@+id/itemWebtoon_folderName"
+        app:layout_constraintBottom_toTopOf="@+id/itemFolder_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/folder" />
 
     <TextView
-        android:id="@+id/itemWebtoon_folderName"
+        android:id="@+id/itemFolder_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Folder name"
@@ -32,5 +32,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/itemWebtoon_image" />
+        app:layout_constraintTop_toBottomOf="@+id/itemFolder_image" />
 </androidx.constraintlayout.widget.ConstraintLayout>
