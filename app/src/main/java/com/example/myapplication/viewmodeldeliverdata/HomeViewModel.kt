@@ -28,7 +28,7 @@ class HomeViewModel : ViewModel() {
     private fun ApiRequest() {
         viewModelScope.launch {
             try {
-                val currentText = WebtoonOriginalsApi.retrofitService.getTitleInfo(3054, Langage.en)
+                val currentText = WebtoonOriginalsApi.retrofitService.getGenresList( Langage.en)
                 Log.d("Success", currentText.toString())
                 _status.value = "Success: $currentText"
             } catch (e: Exception) {

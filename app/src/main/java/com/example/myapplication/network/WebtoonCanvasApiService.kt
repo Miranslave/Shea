@@ -48,7 +48,7 @@ interface WebtoonCanvasApiService {
 
     //Fonction qui renvoie le JSON qui donne la page home
     @Headers(XRapidAPIkey, XRapidAPIHostadress)
-    @GET("search?query=boy%20friend&startIndex=0&pageSize=5&language=en")
+    @GET("search")
     suspend fun getSearch(
         @Query("query") searchquery: String,
         @Query("startIndex") debutpage: Int,

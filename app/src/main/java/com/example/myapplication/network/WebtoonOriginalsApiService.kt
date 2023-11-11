@@ -37,17 +37,20 @@ interface WebtoonOriginalsApiService {
     suspend fun getGenresList(
         @Query("lang") lang: Langage
     ): OriginalRequestGenreList
+
     @Headers(Headerkey, Headerhost)
     @GET("titles/list")
     suspend fun getTitlesList(
         @Query("lang") lang: Langage
     ): OriginalRequestTitleList
+
     @Headers(Headerkey, Headerhost)
     @GET("titles/list-by-rank")
     suspend fun getTitlesListByRank(
         @Query("count") count: Int,
         @Query("lang") lang: Langage
     ): TitleListByRankRequest
+
     @Headers(Headerkey, Headerhost)
     @GET("titles/get-info")
     suspend fun getTitleInfo(

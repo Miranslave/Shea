@@ -62,6 +62,22 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
+
+    implementation("com.squareup.okhttp3:okhttp:3.10.0")
+
+    // Retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    // Retrofit with Moshi Converter
+    implementation ("com.squareup.retrofit2:converter-moshi:2.9.0")
+
+    // Moshi
+    implementation ("com.squareup.moshi:moshi-kotlin:1.13.0")
+    implementation ("com.google.android.material:material:1.10.0")
+    implementation("com.google.code.gson:gson:2.10.1")
+
+    //ViewModel
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
+
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
