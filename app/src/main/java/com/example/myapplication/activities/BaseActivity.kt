@@ -11,23 +11,29 @@ import com.example.myapplication.fragments.LibraryFragment
 import com.example.myapplication.fragments.SearchFragment
 import com.example.myapplication.fragments.SettingsFragment
 
-private val tabs = mapOf(
-    R.id.activityBase_homeTab to mapOf(
-        "fragment" to HomeFragment(), "title" to "Accueil"
-    ), R.id.activityBase_searchTab to mapOf(
-        "fragment" to SearchFragment(), "title" to "Recherche"
-    ), R.id.activityBase_libraryTab to mapOf(
-        "fragment" to LibraryFragment(), "title" to "Bibliothèque"
-    ), R.id.activityBase_settingsTab to mapOf(
-        "fragment" to SettingsFragment(), "title" to "Paramètres"
-    )
-)
 
 class BaseActivity : AppCompatActivity() {
+    private lateinit var tabs: Map<Int, Map<String, Any>>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_base)
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        tabs = mapOf(
+            R.id.activityBase_homeTab to mapOf(
+                "fragment" to HomeFragment(), "title" to getString(R.string.home_tab_title)
+            ), R.id.activityBase_searchTab to mapOf(
+                "fragment" to SearchFragment(), "title" to getString(R.string.search_tab_title)
+            ), R.id.activityBase_libraryTab to mapOf(
+                "fragment" to LibraryFragment(), "title" to getString(R.string.library_tab_title)
+            ), R.id.activityBase_settingsTab to mapOf(
+                "fragment" to SettingsFragment(), "title" to getString(R.string.settings_tab_title)
+            )
+        )
 
         tabs.keys.forEach { id ->
             findViewById<View>(id).setOnClickListener { changeToTab(id) }

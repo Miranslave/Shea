@@ -4,4 +4,8 @@
     <string name="title_activity_home" translatable="false">HomeActivity</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="library_tab_title">Bibliothèque</string>
+    <string name="home_tab_title">Accueil</string>
+    <string name="search_tab_title">Recherche</string>
+    <string name="settings_tab_title">Paramètres</string>
 </resources>

@@ -74,7 +74,7 @@ class HomeFragment : Fragment(), OnItemClickListener {
     }
 
     // Give folders name to view
-    private fun getMyData(): Array<WebtoonFolder> {
+    private fun getMyData(): Array<Any> {
         return arrayOf(
             WebtoonFolder("Action", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec euismod, nisl eget ultricies ultrices, nunc nisl aliquam nunc, quis aliquet nisl nunc eu nisl. Donec euismod, nisl eget ultricies ultrices, nunc nisl aliquam nunc, quis aliquet nisl nunc eu nisl."),
             WebtoonFolder("Aventure", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec euismod, nisl eget ultricies ultrices, nunc nisl aliquam nunc, quis aliquet nisl nunc eu nisl. Donec euismod, nisl eget ultricies ultrices, nunc nisl aliquam nunc, quis aliquet nisl nunc eu nisl."),
@@ -87,14 +87,17 @@ class HomeFragment : Fragment(), OnItemClickListener {
     }
 
     // Change page when click on a folder
-    override fun onItemClick(folderPos: Int) {
-        println("Clicked on $folderPos")
+    override fun onItemClick(position: Int, item: Any) {
+        println("Clicked on $position")
 
         val mainActivity = (activity as? BaseActivity)
-        mainActivity?.changeFragment(WebtoonFolderDetailsFragment(folderPos))
-        mainActivity?.changeTitle(getMyData()[folderPos].getTitle())
+        val webtoonFolder = item as WebtoonFolder
+
+        mainActivity?.changeFragment(WebtoonFolderDetailsFragment(webtoonFolder))
+        mainActivity?.changeTitle(webtoonFolder.getTitle())
     }
 
+    // Set each item folder title to the view
     override fun onItemDraw(holder: WebtoonsRecyclerViewHolder, position: Int, item: Any) {
         val webtoonFolder = item as WebtoonFolder
         holder.view.findViewById<TextView>(R.id.itemFolder_title).text = webtoonFolder.getTitle()

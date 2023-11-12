@@ -13,6 +13,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="0"
             android:background="@drawable/border_radius"
             android:orientation="horizontal">
 
@@ -24,10 +25,40 @@
             </SearchView>
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_weight="0"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/fragmentLibrary_listDisplayButton"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_weight="0"
+                android:backgroundTint="@color/main_gray"
+                android:clickable="true"
+                android:scaleType="centerInside"
+                android:src="@drawable/list" />
+
+            <ImageButton
+                android:id="@+id/fragmentLibrary_gridDisplayButton"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:backgroundTint="@color/main_gray"
+                android:clickable="true"
+                android:padding="13dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/grid" />
+        </LinearLayout>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/fragmentLibrary_itemsList"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:paddingTop="10dp" />
     </LinearLayout>
 

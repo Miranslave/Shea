@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
@@ -40,7 +39,7 @@ class LibraryFragment : Fragment(), OnItemClickListener {
     }
 
     // Give folders name to view
-    private fun getMyData(): Array<Webtoon> {
+    private fun getMyData(): Array<Any> {
         return arrayOf(
             Webtoon("Webtoon 1", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec euismod, nisl eget ultricies ultrices, nunc nisl aliquam nunc, quis aliquet nisl nunc eu nisl. Donec euismod, nisl eget ultricies ultrices, nunc nisl aliquam nunc, quis aliquet nisl nunc eu nisl."),
             Webtoon("Webtoon 2", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec euismod, nisl eget ultricies ultrices, nunc nisl aliquam nunc, quis aliquet nisl nunc eu nisl. Donec euismod, nisl eget ultricies ultrices, nunc nisl aliquam nunc, quis aliquet nisl nunc eu nisl."),
@@ -49,12 +48,14 @@ class LibraryFragment : Fragment(), OnItemClickListener {
     }
 
     // Change page when click on a folder
-    override fun onItemClick(folderPos: Int) {
-        println("Clicked on $folderPos")
+    override fun onItemClick(position: Int, item: Any) {
+        println("Clicked on $position")
 
         val mainActivity = (activity as? BaseActivity)
-        mainActivity?.changeTitle(getMyData()[folderPos].getTitle())
-//        mainActivity?.changeFragment(WebtoonFolderDetailsFragment(folderPos))
+        val webtoon = item as Webtoon
+
+        mainActivity?.changeTitle(webtoon.getTitle())
+        mainActivity?.changeFragment(WebtoonDetailsFragment(webtoon))
     }
 
     override fun onItemDraw(holder: WebtoonsRecyclerViewHolder, position: Int, item: Any) {

@@ -11,7 +11,7 @@ import com.example.myapplication.Webtoon
  * This class is used to display a list of webtoons in a RecyclerView.
  */
 class WebtoonsListAdapter(
-    private val webtoonsList: Array<Webtoon>, private val listener: OnItemClickListener, private val itemsLayoutId: Int
+    private val webtoonsList: Array<Any>, private val listener: OnItemClickListener, private val itemsLayoutId: Int
 
 ) : RecyclerView.Adapter<WebtoonsRecyclerViewHolder>() {
 
@@ -20,13 +20,13 @@ class WebtoonsListAdapter(
     override fun onCreateViewHolder(
         parent: ViewGroup, viewType: Int
     ): WebtoonsRecyclerViewHolder {
-        return WebtoonsRecyclerViewHolder(LayoutInflater.from(parent.context).inflate(itemsLayoutId, parent, false), listener)
+        return WebtoonsRecyclerViewHolder(LayoutInflater.from(parent.context).inflate(itemsLayoutId, parent, false), listener, webtoonsList)
     }
 
     // Replace the contents of a view (invoked by the layout manager)
     override fun onBindViewHolder(holder: WebtoonsRecyclerViewHolder, position: Int) {
         listener.onItemDraw(holder, position, webtoonsList[position])
-        holder.itemView.setOnClickListener { listener.onItemClick(position) }
+        holder.itemView.setOnClickListener { listener.onItemClick(position, webtoonsList[position]) }
     }
 
     // Return the size of the dataset (invoked by the layout manager)
