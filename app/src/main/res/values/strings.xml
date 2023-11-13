@@ -8,4 +8,12 @@
     <string name="home_tab_title">Accueil</string>
     <string name="search_tab_title">Recherche</string>
     <string name="settings_tab_title">Paramètres</string>
+    <string name="changePasswordText">Changer de mot de passe</string>
+    <string name="statText">Statistiques</string>
+    <string name="exportDataText">Exporter les données</string>
+    <string name="disconnectText">Se déconnecter</string>
+    <string name="a_propos_image_description">À propos</string>
+    <string name="aide_description">Aide</string>
+    <string name="about">À propos</string>
+    <string name="help">Aide</string>
 </resources>
