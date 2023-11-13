@@ -16,4 +16,11 @@
     <string name="aide_description">Aide</string>
     <string name="about">À propos</string>
     <string name="help">Aide</string>
+    <string name="Version">Version</string>
+    <string name="version_number">Version 1.0</string>
+    <string name="author">Auteur</string>
+    <string name="author_1_name">Alex Ding</string>
+    <string name="author_2_name">Killian Denéchère</string>
+    <string name="author_3_name">Farès Zaroui</string>
+    <string name="helpText">Texte temporaire de l\'explication du fonctionnement de l\'application</string>
 </resources>

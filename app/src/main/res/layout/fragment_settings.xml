@@ -62,7 +62,7 @@
         app:layout_constraintTop_toBottomOf="@+id/activityBase_disconnect" />
 
     <ImageView
-        android:id="@+id/imageView6"
+        android:id="@+id/activityBase_aboutImage"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginStart="10dp"
@@ -73,36 +73,36 @@
         android:contentDescription="@string/a_propos_image_description" />
 
     <TextView
-        android:id="@+id/textView14"
+        android:id="@+id/activityBase_aboutText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="14dp"
         android:text="@string/about"
         android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView6"
-        app:layout_constraintStart_toEndOf="@+id/imageView6"
-        app:layout_constraintTop_toTopOf="@+id/imageView6" />
+        app:layout_constraintBottom_toBottomOf="@+id/activityBase_aboutImage"
+        app:layout_constraintStart_toEndOf="@+id/activityBase_aboutImage"
+        app:layout_constraintTop_toTopOf="@+id/activityBase_aboutImage" />
 
     <ImageView
-        android:id="@+id/imageView7"
+        android:id="@+id/activityBase_helpImage"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginStart="10dp"
         android:layout_marginTop="7dp"
         android:src="@drawable/help"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView6"
+        app:layout_constraintTop_toBottomOf="@+id/activityBase_aboutImage"
         android:contentDescription="@string/aide_description" />
 
     <TextView
-        android:id="@+id/textView15"
+        android:id="@+id/activityBase_helpText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="14dp"
         android:text="@string/help"
         android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView7"
-        app:layout_constraintStart_toEndOf="@+id/imageView7"
-        app:layout_constraintTop_toTopOf="@+id/imageView7" />
+        app:layout_constraintBottom_toBottomOf="@+id/activityBase_helpImage"
+        app:layout_constraintStart_toEndOf="@+id/activityBase_helpImage"
+        app:layout_constraintTop_toTopOf="@+id/activityBase_helpImage" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
