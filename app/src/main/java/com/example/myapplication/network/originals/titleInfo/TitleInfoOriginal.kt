@@ -7,7 +7,6 @@ data class TitleInfoOriginal(
     val title: String,
     val representGenre: String,
     val synopsis: String,
-    val restTerminationStatus: String,
     val newTitle: Boolean,
     val ageGradeNotice: Boolean,
     val totalServiceEpisodeCount: Int,
@@ -15,8 +14,6 @@ data class TitleInfoOriginal(
     val thumbnail: String,
     val linkUrl: String,
     val starScoreAverage: Float,
-
     val readCount: Int,
     val favoriteCount: Int,
-
-    )
+)

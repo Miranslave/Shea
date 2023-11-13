@@ -19,7 +19,6 @@ const val Headerkey = "X-RapidAPI-Key: 83abec409emshdaef86121bb4e5ep125787jsnd79
 const val Headerhost = "X-RapidAPI-Host: webtoon.p.rapidapi.com"
 
 private val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
-
 private val retrofit = Retrofit.Builder().addConverterFactory(MoshiConverterFactory.create(moshi)).baseUrl(ORIGINAL_URL).build()
 
 interface WebtoonOriginalsApiService {

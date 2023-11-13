@@ -14,12 +14,15 @@ data class OriginalTitle(
     val starScoreAverage: Float,
     val readCount: Int,
     val favoriteCount: Int,
+    val likeitCount: Int,
     val lastEpisodeRegisterYmdt: String,
     val synopsis: String,
     val subGenre: List<String>,
     val weekday: List<String>,
+    val totalServiceEpisodeCount: Int,
     val genreColor: String,
+    val titleForSeo: String,
     val webtoonType: String,
     val writingAuthorName: String,
-
-    )
+    val writingAuthorNo: Int,
+)

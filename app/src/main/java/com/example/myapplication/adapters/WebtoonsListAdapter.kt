@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
  * This class is used to display a list of webtoons in a RecyclerView.
  */
 class WebtoonsListAdapter(
-    private val webtoonsList: Array<*>, private val listener: RecyclerViewEventsManager, private val itemsLayoutId: Int
+    private val webtoonsList: List<*>, private val listener: RecyclerViewEventsManager, private val itemsLayoutId: Int
 
 ) : RecyclerView.Adapter<WebtoonsRecyclerViewHolder>() {
 

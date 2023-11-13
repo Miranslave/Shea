@@ -12,16 +12,15 @@
     <string name="statText">Statistiques</string>
     <string name="exportDataText">Exporter les données</string>
     <string name="disconnectText">Se déconnecter</string>
-    <string name="a_propos_image_description">À propos</string>
     <string name="aide_description">Aide</string>
     <string name="about">À propos</string>
     <string name="help">Aide</string>
     <string name="Version">Version</string>
     <string name="version_number">Version 1.0</string>
     <string name="author">Auteur</string>
-    <string name="author_1_name">Alex Ding</string>
-    <string name="author_2_name">Killian Denéchère</string>
-    <string name="author_3_name">Farès Zaroui</string>
+    <string name="author_1_name" translatable="false">Alex Ding</string>
+    <string name="author_2_name" translatable="false">Killian Denéchère</string>
+    <string name="author_3_name" translatable="false">Farès Zaroui</string>
     <string name="helpText">Texte temporaire de l\'explication du fonctionnement de l\'application</string>
     <string name="previous_page_button">‹ page précédente</string>
 </resources>

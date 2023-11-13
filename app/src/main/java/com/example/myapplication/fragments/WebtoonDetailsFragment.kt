@@ -46,7 +46,7 @@ class WebtoonDetailsFragment(private val webtoon: Webtoon) : Fragment() {
         view.findViewById<TextView>(R.id.fragmentWebtoonDetails_author).text = webtoon.getAuthor()
         view.findViewById<TextView>(R.id.fragmentWebtoonDetails_description).text = webtoon.getSynopsis()
         view.findViewById<TextView>(R.id.fragmentWebtoonDetails_genre).text = webtoon.getGenre()
-        view.findViewById<TextView>(R.id.fragmentWebtoonDetails_status).text = webtoon.getRestTerminationStatus()
+        view.findViewById<TextView>(R.id.fragmentWebtoonDetails_theme).text = webtoon.getTheme()
         view.findViewById<TextView>(R.id.fragmentWebtoonDetails_totalEpisodes).text = webtoon.getTotalEpisodeCount().toString()
 
         // Set the onClickListener for the URL button

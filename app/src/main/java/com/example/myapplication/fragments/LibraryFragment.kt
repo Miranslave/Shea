@@ -5,6 +5,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.RotateAnimation
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,7 +28,7 @@ class LibraryFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager
     // This method inflates the layout for this fragment and initializes the RecyclerView with a grid layout to display folders in 2 columns.
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         var view = inflater.inflate(R.layout.fragment_library, container, false)
-        this.initRecyclerViewDisplay(view, R.id.fragmentLibrary_itemsList, WebtoonsListAdapter(arrayOf<Webtoon>(), this, R.layout.item_library_webtoon), LinearLayoutManager(context))
+        this.initRecyclerViewDisplay(view, R.id.fragmentLibrary_itemsList, WebtoonsListAdapter(listOf<Webtoon>(), this, R.layout.item_library_webtoon), LinearLayoutManager(context))
         return view
     }
 
@@ -33,24 +36,29 @@ class LibraryFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.getWebtoonsList(object : ViewModelCallback<Array<Webtoon>> {
+        // Animate the spinner
+        this.animateSpinner()
+
+        // Fetch the list of webtoons from the ViewModel
+        viewModel.getWebtoonsList(object : ViewModelCallback<List<Webtoon>> {
             // On successful fetch, update the RecyclerView with the fetched data.
-            override fun onSuccess(result: Array<Webtoon>) {
+            override fun onSuccess(result: List<Webtoon>) {
                 Log.d("Success", result.toString())
                 setRecyclerViewContent(WebtoonsListAdapter(result, this@LibraryFragment, R.layout.item_library_webtoon))
+                stopSpinner()
             }
 
             // On error, log the error and show a toast message.
             override fun onError(e: Throwable) {
                 Log.d("Error", e.toString())
                 Toast.makeText(context, "Une erreur empêche l'affichage", Toast.LENGTH_SHORT).show()
+                stopSpinner()
             }
         })
     }
 
     // This method is called when an item in the RecyclerView is clicked. It changes the title of the main activity and replaces the current fragment with a `WebtoonDetailsFragment` that shows the details of the clicked webtoon.
     override fun onItemClick(position: Int, item: Any?) {
-        Log.d("info", "Clicked on $position")
         val mainActivity = (activity as? BaseActivity)
         val webtoon = item as Webtoon
         mainActivity?.changeTitle(webtoon.getTitle())
@@ -64,5 +72,26 @@ class LibraryFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager
         holder.view.findViewById<TextView>(R.id.itemLibrary_synopsis).text = webtoon.getSynopsis()
         // This line of code is commented out. It seems to be intended for setting an image resource to an ImageView, but it's not completed.
         // holder.view.findViewById<ImageView>(R.id.itemLibrary_image).setImageResource()
+    }
+
+    private fun animateSpinner() {
+        val rotate = RotateAnimation(
+            0f,
+            360f,
+            Animation.RELATIVE_TO_SELF,
+            0.5f,
+            Animation.RELATIVE_TO_SELF,
+            0.5f
+        ).apply {
+            duration = 2000
+            repeatCount = Animation.INFINITE
+        }
+
+        requireView().findViewById<ImageView>(R.id.fragmentLibrary_loading).startAnimation(rotate)
+    }
+
+    private fun stopSpinner() {
+        requireView().findViewById<ImageView>(R.id.fragmentLibrary_loading).clearAnimation()
+        requireView().findViewById<ImageView>(R.id.fragmentLibrary_loading).visibility = View.GONE
     }
 }

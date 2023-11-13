@@ -49,7 +49,6 @@ android {
 }
 
 dependencies {
-
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.10.0")
@@ -61,7 +60,6 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
-
     implementation("com.squareup.okhttp3:okhttp:3.10.0")
 
     // Retrofit
@@ -74,7 +72,7 @@ dependencies {
     implementation("com.google.android.material:material:1.10.0")
     implementation("com.google.code.gson:gson:2.10.1")
 
-    //ViewModel
+    // ViewModel
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
 
     testImplementation("junit:junit:4.13.2")

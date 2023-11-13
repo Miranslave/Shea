@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
  * This class is used to display a list of webtoons folders in a RecyclerView.
  */
 class WebtoonsFoldersListAdapter(
-    private val webtoonsFoldersList: Array<*>, private val listener: RecyclerViewEventsManager, private val itemsLayoutId: Int
+    private val webtoonsFoldersList: List<*>, private val listener: RecyclerViewEventsManager, private val itemsLayoutId: Int
 ) : RecyclerView.Adapter<WebtoonsRecyclerViewHolder>() {
 
     // Create new views (invoked by the layout manager)
