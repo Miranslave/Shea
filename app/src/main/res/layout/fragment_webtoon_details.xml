@@ -22,7 +22,7 @@
                 android:layout_marginBottom="20dp"
                 android:layout_weight="1"
                 android:clickable="true"
-                android:text="‹ page précédente"
+                android:text="@string/previous_page_button"
                 android:textColor="#3F51B5" />
 
             <LinearLayout
@@ -50,7 +50,20 @@
                         android:layout_gravity="right">
 
                         <ImageButton
-                            android:id="@+id/imageButton"
+                            android:id="@+id/fragmentWebtoonDetails_urlButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_margin="5dp"
+                            android:layout_weight="1"
+                            android:adjustViewBounds="true"
+                            android:background="@drawable/border_radius"
+                            android:maxHeight="30dp"
+                            android:padding="5dp"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/link" />
+
+                        <ImageButton
+                            android:id="@+id/fragmentWebtoonDetails_saveButton"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_margin="5dp"
@@ -63,7 +76,7 @@
                             android:src="@drawable/bookmark" />
 
                         <ImageButton
-                            android:id="@+id/imageButton2"
+                            android:id="@+id/fragmentWebtoonDetails_favoriteButton"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_margin="5dp"
@@ -88,7 +101,6 @@
                             android:orientation="horizontal">
 
                             <TextView
-                                android:id="@+id/textView"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginEnd="5dp"
@@ -96,11 +108,10 @@
                                 android:textStyle="bold" />
 
                             <TextView
-                                android:id="@+id/textView5"
+                                android:id="@+id/fragmentWebtoonDetails_author"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="TextView" />
+                                android:layout_weight="1" />
                         </LinearLayout>
 
                         <LinearLayout
@@ -110,19 +121,17 @@
                             android:orientation="horizontal">
 
                             <TextView
-                                android:id="@+id/textView"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginEnd="5dp"
-                                android:text="Editeur"
+                                android:text="Épisodes"
                                 android:textStyle="bold" />
 
                             <TextView
-                                android:id="@+id/textView5"
+                                android:id="@+id/fragmentWebtoonDetails_totalEpisodes"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="TextView" />
+                                android:layout_weight="1" />
                         </LinearLayout>
 
                         <LinearLayout
@@ -132,19 +141,17 @@
                             android:orientation="horizontal">
 
                             <TextView
-                                android:id="@+id/textView"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginEnd="5dp"
-                                android:text="Source"
+                                android:text="Statut"
                                 android:textStyle="bold" />
 
                             <TextView
-                                android:id="@+id/textView5"
+                                android:id="@+id/fragmentWebtoonDetails_status"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="TextView" />
+                                android:layout_weight="1" />
 
                         </LinearLayout>
 
@@ -155,7 +162,6 @@
                             android:orientation="horizontal">
 
                             <TextView
-                                android:id="@+id/textView"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginEnd="5dp"
@@ -163,11 +169,10 @@
                                 android:textStyle="bold" />
 
                             <TextView
-                                android:id="@+id/textView5"
+                                android:id="@+id/fragmentWebtoonDetails_genre"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="TextView" />
+                                android:layout_weight="1" />
 
                         </LinearLayout>
                     </LinearLayout>

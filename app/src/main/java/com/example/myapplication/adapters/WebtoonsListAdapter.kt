@@ -2,16 +2,13 @@ package com.example.myapplication.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.myapplication.R
-import com.example.myapplication.Webtoon
 
 /**
  * This class is used to display a list of webtoons in a RecyclerView.
  */
 class WebtoonsListAdapter(
-    private val webtoonsList: Array<Any>, private val listener: OnItemClickListener, private val itemsLayoutId: Int
+    private val webtoonsList: Array<*>, private val listener: RecyclerViewEventsManager, private val itemsLayoutId: Int
 
 ) : RecyclerView.Adapter<WebtoonsRecyclerViewHolder>() {
 

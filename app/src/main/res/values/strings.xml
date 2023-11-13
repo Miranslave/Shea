@@ -8,4 +8,5 @@
     <string name="home_tab_title">Accueil</string>
     <string name="search_tab_title">Recherche</string>
     <string name="settings_tab_title">Paramètres</string>
+    <string name="previous_page_button">‹ page précédente</string>
 </resources>

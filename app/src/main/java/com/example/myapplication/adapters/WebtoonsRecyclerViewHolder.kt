@@ -5,7 +5,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 
 // Provide a reference to the views for each data item
-class WebtoonsRecyclerViewHolder(val view: View, private val listener: OnItemClickListener, private val items:Array<Any>) : RecyclerView.ViewHolder(view) {
+class WebtoonsRecyclerViewHolder(val view: View, private val listener: RecyclerViewEventsManager, private val items:Array<*>) : RecyclerView.ViewHolder(view) {
     init {
         view.setOnClickListener {
             listener.onItemClick(adapterPosition, items[adapterPosition])

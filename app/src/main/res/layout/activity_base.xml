@@ -30,7 +30,7 @@
             android:layout_height="match_parent"
             android:fontFamily="@font/syncopate"
             android:gravity="center_vertical"
-            android:text="Accueil"
+            android:text="Titre"
             android:textAlignment="center"
             android:textColor="@color/main_dark_blue"
             android:textSize="20sp"

@@ -66,10 +66,12 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/itemLibrary_description"
+                android:id="@+id/itemLibrary_synopsis"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="0"
+                android:ellipsize="end"
+                android:maxLines="3"
                 android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
                 android:textAlignment="textStart"
                 android:textAllCaps="false"
