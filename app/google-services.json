@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "668068963100",
+    "project_id": "shea-3264c",
+    "storage_bucket": "shea-3264c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:668068963100:android:17a84851033c0497b610d9",
+        "android_client_info": {
+          "package_name": "com.example.myapplication"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhb-wR-L1icH0vBgZXvfOP-5zxDBMv5Mg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
