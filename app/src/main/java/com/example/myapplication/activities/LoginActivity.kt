@@ -7,11 +7,16 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.setValue
 import com.example.myapplication.R
+import com.example.myapplication.viewModels.UserViewModel
 import com.google.firebase.auth.FirebaseAuth
 
+
 class LoginActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -45,6 +50,8 @@ class LoginActivity : AppCompatActivity() {
                 task->
             if (task.isSuccessful){
                 Log.d("TAG","Sign in sucess")
+
+
                 showHomeActivity()
             }else{
                 Log.w("TAG","Sign in Failed",task.exception)

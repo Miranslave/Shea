@@ -19,6 +19,7 @@ import com.example.myapplication.adapters.WebtoonsListAdapter
 import com.example.myapplication.adapters.WebtoonsRecyclerViewHolder
 import com.example.myapplication.viewModels.LibraryViewModel
 import com.example.myapplication.viewModels.ViewModelCallback
+import com.google.firebase.auth.FirebaseAuth
 
 // This class represents a fragment in the application that displays a list of webtoons in a RecyclerView.
 class LibraryFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
@@ -27,6 +28,7 @@ class LibraryFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager
 
     // This method inflates the layout for this fragment and initializes the RecyclerView with a grid layout to display folders in 2 columns.
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        val  user = FirebaseAuth.getInstance().currentUser
         var view = inflater.inflate(R.layout.fragment_library, container, false)
         this.initRecyclerViewDisplay(view, R.id.fragmentLibrary_itemsList, WebtoonsListAdapter(listOf<Webtoon>(), this, R.layout.item_library_webtoon), LinearLayoutManager(context))
         return view

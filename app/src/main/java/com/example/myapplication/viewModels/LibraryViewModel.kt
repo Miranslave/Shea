@@ -9,9 +9,16 @@ import com.example.myapplication.network.originals.titleInfo.TitleGetInfoRequest
 import com.example.myapplication.network.originals.titleList.OriginalRequestTitleList
 import com.example.myapplication.network.originals.titleList.OriginalTitle
 import com.example.myapplication.network.originals.titleList.OriginalTitleList
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 // Define a ViewModel for the Library
 class LibraryViewModel : CustomViewModel() {
+
+
+    val db = Firebase.firestore
+
 
     // Define a list of Webtoon IDs
     private var webtoonsIdsList: List<Int> = listOf(75, 418, 676, 5727, 4940, 1253, 3485, 2467)
