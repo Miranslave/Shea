@@ -65,6 +65,10 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
         })
     }
 
+    fun addFoldertoDb(uid: String){
+
+
+    }
     fun Dbgetter():ArrayList<Any>{
         val res: ArrayList<Any> = ArrayList()
         var a: WebtoonFolder? = null
@@ -85,9 +89,6 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
     }
     // Give folders name to view
     private fun getMyData(): List<Any> {
-        Dbgetter()
-
-
 
         return listOf(
             WebtoonFolder("Action", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec euismod, nisl eget ultricies ultrices, nunc nisl aliquam nunc, quis aliquet nisl nunc eu nisl. Donec euismod, nisl eget ultricies ultrices, nunc nisl aliquam nunc, quis aliquet nisl nunc eu nisl."),
