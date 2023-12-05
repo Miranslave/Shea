@@ -1,5 +1,6 @@
 package com.example.myapplication.activities
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -8,6 +9,8 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.myapplication.R
+import com.example.myapplication.firestoredb.data.Firestore
+import com.example.myapplication.firestoredb.data.FirestoreCallback
 import com.example.myapplication.fragments.HomeFragment
 import com.example.myapplication.fragments.LibraryFragment
 import com.example.myapplication.fragments.SearchFragment
@@ -19,13 +22,26 @@ import com.google.firebase.auth.FirebaseAuth
 class BaseActivity : AppCompatActivity() {
     private lateinit var tabs: Map<Int, Map<String, Any>>
     val  viewModel: UserViewModel by viewModels()
+    val  firestore: Firestore = Firestore()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_base)
         val  user = FirebaseAuth.getInstance().currentUser
+
+        // shared pref
+        val sharedPref = this?.getPreferences(Context.MODE_PRIVATE) ?: return
+        with (sharedPref.edit()) {
+            putString("uid",user?.uid.toString())
+            putString("user_email",user?.email.toString())
+            Log.d("SharedPref", user?.uid.toString())
+            apply()
+        }
+
+
         viewModel.user_id = user?.uid.toString()
         viewModel.email = user?.email.toString()
         Log.d("USER-DATA",viewModel.email+viewModel.user_id)
+
     }
 
     override fun onStart() {

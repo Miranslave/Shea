@@ -1,8 +1,9 @@
 package com.example.myapplication.fragments
 
 import android.app.AlertDialog
+import android.content.ContentValues.TAG
+import android.content.Context
 import android.os.Bundle
-import android.os.ProxyFileDescriptorCallback
 import android.text.InputType
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,6 +11,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
+
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.myapplication.R
 import com.example.myapplication.WebtoonFolder
@@ -17,17 +20,22 @@ import com.example.myapplication.activities.BaseActivity
 import com.example.myapplication.adapters.RecyclerViewEventsManager
 import com.example.myapplication.adapters.WebtoonsFoldersListAdapter
 import com.example.myapplication.adapters.WebtoonsRecyclerViewHolder
+import com.example.myapplication.firestoredb.data.Firestore
+import com.example.myapplication.firestoredb.data.FirestoreCallback
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.play.integrity.internal.x
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
 
 class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
     val db = Firebase.firestore
+    val sharedPref= activity?.getPreferences(Context.MODE_PRIVATE)
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         var view = inflater.inflate(R.layout.fragment_home, container, false)
+
+
 
         // Set up the RecyclerView with a grid layout to display folders in 2 columns
         this.initRecyclerViewDisplay(view, R.id.fragmentHome_itemsList, WebtoonsFoldersListAdapter(this.getMyData(), this, R.layout.item_webtoon_folder), GridLayoutManager(context, 2))
@@ -37,8 +45,12 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        val uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
         val floatingCreationButton: FloatingActionButton = view.findViewById(R.id.fragmentHome_newFolderButton)
+        Log.d("SharedPref", uid.toString())
+        if (uid != null) {
+            Dbgetter(uid)
+        }
 
         floatingCreationButton.setOnClickListener(fun(_: View) {
             // Create an AlertDialog builder
@@ -53,6 +65,8 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
             // Set up the buttons
             builder.setPositiveButton("Créer") { _, _ ->
                 val folderTitle = input.text.toString()
+                addFoldertoDb(uid,folderTitle)
+                Dbgetter(uid)
             }
 
             builder.setNegativeButton("Annuler") { dialog, _ -> dialog.cancel() }
@@ -65,27 +79,34 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
         })
     }
 
-    fun addFoldertoDb(uid: String){
+    fun addFoldertoDb(uid: String,title:String){
+        val wbtfolder = hashMapOf(
+            "uid" to uid,
+            "title" to title,
+            "description" to "a link  au + ",
+        )
 
+        db.collection("WebtoonFolder").document()
+            .set(wbtfolder)
+            .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully written!") }
+            .addOnFailureListener { e -> Log.w(TAG, "Error writing document", e) }
 
     }
-    fun Dbgetter():ArrayList<Any>{
+
+
+    private fun Dbgetter(uid:String){
         val res: ArrayList<Any> = ArrayList()
-        var a: WebtoonFolder? = null
-        db.collection("WebtoonFolder")
-            .get()
-            .addOnSuccessListener { result ->
-                for (document in result) {
-                    a= WebtoonFolder(document.data.get("title").toString()
-                        ,document.data.get("description").toString())
-                    Log.d("Webtoon", a?.getTitle().toString()+a?.getDescription().toString())
-                }
-                res.add(a!!)
+        Firestore().WebtoonFolder(uid,object : FirestoreCallback<List<WebtoonFolder>>{
+            override fun onSuccess(result: List<Any>) {
+
+                setRecyclerViewContent(WebtoonsFoldersListAdapter(result,this@HomeFragment,R.layout.item_webtoon_folder))
             }
-            .addOnFailureListener { exception ->
-                Log.w("Failed", "Error getting documents.", exception)
+            override fun onError(e: Throwable) {
+
+                Log.d("Error", e.toString())
+                Toast.makeText(context, "Une erreur empêche l'affichage", Toast.LENGTH_SHORT).show()
             }
-        return res
+        })
     }
     // Give folders name to view
     private fun getMyData(): List<Any> {
