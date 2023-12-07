@@ -21,7 +21,7 @@ class Firestore() {
                 for (document in result) {
                     if(document.data.get("uid")==uid){
                     res.add(WebtoonFolder(document.data.get("title").toString()
-                        ,document.data.get("description").toString()))
+                        ,document.data.get("description").toString(),document.id))
                         }
                 }
 

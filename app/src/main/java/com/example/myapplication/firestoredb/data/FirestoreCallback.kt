@@ -1,5 +1,7 @@
 package com.example.myapplication.firestoredb.data
 
+import com.example.myapplication.WebtoonFolder
+
 interface FirestoreCallback<R> {
     // This method is called when the operation is successful
     // 'result' is the result of the operation

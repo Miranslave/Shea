@@ -10,6 +10,8 @@ import com.example.myapplication.R
 import com.example.myapplication.activities.BaseActivity
 import com.example.myapplication.activities.CreateAccountActivity
 import com.example.myapplication.activities.LoginActivity
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 private val subTabs = mapOf(
     R.id.activityBase_aboutText to mapOf(
@@ -48,6 +50,7 @@ class SettingsFragment : Fragment(){
     }
 
     private fun showLoginActivity() {
+        Firebase.auth.signOut()
         val intent = Intent((activity as? BaseActivity), LoginActivity::class.java)
         startActivity(intent)
     }

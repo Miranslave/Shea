@@ -23,9 +23,11 @@ import com.example.myapplication.adapters.WebtoonsFoldersListAdapter
 import com.example.myapplication.adapters.WebtoonsRecyclerViewHolder
 import com.example.myapplication.firestoredb.data.Firestore
 import com.example.myapplication.firestoredb.data.FirestoreCallback
+import com.google.android.gms.tasks.Task
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.play.integrity.internal.c
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
@@ -36,8 +38,6 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         var view = inflater.inflate(R.layout.fragment_home, container, false)
-
-
 
         // Set up the RecyclerView with a grid layout to display folders in 2 columns
         this.initRecyclerViewDisplay(view, R.id.fragmentHome_itemsList, WebtoonsFoldersListAdapter(this.getMyData(), this, R.layout.item_webtoon_folder), GridLayoutManager(context, 2))
@@ -61,14 +61,14 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
             builder.setTitle("Créer un nouveau dossier ?")
 
             // Set up the input field
-            val title_input = EditText(this.context)
-            title_input.inputType = InputType.TYPE_CLASS_TEXT
-            builder.setView(title_input)
-
-            val description_input = EditText(this.context)
-            description_input.inputType = InputType.TYPE_CLASS_TEXT
-            builder.setView(description_input)
-
+            val titleinput = EditText(this.context)
+            titleinput.inputType = InputType.TYPE_CLASS_TEXT
+            builder.setView(titleinput)
+            /*
+            val descriptioninput = EditText(this.context)
+            descriptioninput.inputType = InputType.TYPE_CLASS_TEXT
+            builder.setView(descriptioninput)
+            */
             /*
             val lay = GridLayout()
             lay.orientation = LinearLayout.VERTICAL
@@ -79,7 +79,7 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
 
             // Set up the buttons
             builder.setPositiveButton("Créer") { _, _ ->
-                val folderTitle = title_input.text.toString()
+                val folderTitle = titleinput.text.toString()
                 addFoldertoDb(uid,folderTitle)
                 Dbgetter(uid)
             }
@@ -90,31 +90,47 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
             builder.show()
 
             // Set the focus on the input field
-            title_input.requestFocus()
+            titleinput.requestFocus()
         })
         //supression  de dossier
         floatingDeleteButton.setOnClickListener(fun(_: View) {
             // setup the alert builder
-            val mywebtoonfolder = arrayListOf<String>()
+
             val builder = AlertDialog.Builder(context)
             builder.setTitle("Choose some animals")
             Firestore().WebtoonFolder(uid, object : FirestoreCallback<List<WebtoonFolder>> {
                 override fun onSuccess(result: List<Any>) {
-
+                    var arraytitle:Array<String> = emptyArray()//arrayOf("a","b","c")// on doit réussire à  foutre le titre des webtoons du gars dedans :D
+                    var arraydocid:Array<String> = emptyArray()
+                    var arrayidtosend:Array<String> = emptyArray()
                     for(doc in result) {
-                        mywebtoonfolder.add(doc.toString())
+                        var temp:WebtoonFolder = doc as WebtoonFolder
+                        arraytitle = arraytitle.plusElement(temp.getTitle())
+                        arraydocid = arraydocid.plusElement(temp.getdbid())
                     }
-                        val array:Array<String> = arrayOf("a","b","c")// on doit réussire à  foutre le titre des webtoons du gars dedans :D
                         builder.setMultiChoiceItems(
-                            array,
+                            arraytitle,
                             null
                         ) { dialog, which, isChecked ->
                             // user checked or unchecked a box
+
+                            if(isChecked){
+                                Log.d("WebtoonFolderDelete","ajout de titre:"+ arraytitle[which]+" dbid:" +arraydocid[which])
+                                arrayidtosend = arrayidtosend.plusElement(arraydocid[which])
+                            }else{
+                                Log.d("WebtoonFolderDelete","suppression de titre:"+ arraytitle[which]+" dbid:" +arraydocid[which])
+                                arrayidtosend = rmvelementfromarray(arraydocid,arraydocid[which])
+                            }
                         }
 
                     // add OK and Cancel buttons
                     builder.setPositiveButton("OK") { dialog, which ->
                         // user clicked OK
+                        if(!arrayidtosend.isEmpty()){
+                            Log.d("WebtoonFolderDelete", arrayidtosend[0].toString())
+                            deleteFolderfromDb(arrayidtosend.toList())
+                            Dbgetter(uid)
+                        }
                     }
                     builder.setNegativeButton("Cancel", null)
 
@@ -136,8 +152,17 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
 
             })
         })}
+    private fun rmvelementfromarray(array: Array<String>, elmttodlt:String):Array<String>{
+        var res = emptyArray<String>()
+        for(str in array){
+            if(str != elmttodlt){
+                res.plusElement(str)
+            }
+        }
+        return res
+    }
 
-    fun addFoldertoDb(uid: String,title:String){
+    private fun addFoldertoDb(uid: String, title:String){
         val wbtfolder = hashMapOf(
             "uid" to uid,
             "title" to title,
@@ -150,9 +175,10 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
             .addOnFailureListener { e -> Log.w(TAG, "Error writing document", e) }
     }
 
-    fun deleteFolderfromDb(uid:String,title: String){
-
-
+    fun deleteFolderfromDb(dbidlist: List<String>){
+        for(id in  dbidlist){
+            db.collection("WebtoonFolder").document(id).delete()
+        }
     }
 
 
@@ -174,13 +200,13 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
     private fun getMyData(): List<Any> {
 
         return listOf(
-            WebtoonFolder("We chargin :D", "Lorem ipsum dolor sit amet"),
-            WebtoonFolder("We chargin :V",  "Lorem ipsum dolor sit amet"),
-            WebtoonFolder("We chargin :C", "Lorem ipsum dolor sit amet"),
-            WebtoonFolder("We chargin (-_-')","Lorem ipsum dolor sit amet" ),
-            WebtoonFolder("We chargin UwU", "Lorem ipsum dolor sit amet"),
-            WebtoonFolder("We chargin 404", "Lorem ipsum dolor sit amet"),
-            WebtoonFolder("We chargin :O", "Lorem ipsum dolor sit amet")
+            WebtoonFolder("We chargin :D", "Lorem ipsum dolor sit amet",""),
+            WebtoonFolder("We chargin :V",  "Lorem ipsum dolor sit amet",""),
+            WebtoonFolder("We chargin :C", "Lorem ipsum dolor sit amet",""),
+            WebtoonFolder("We chargin (-_-')","Lorem ipsum dolor sit amet","" ),
+            WebtoonFolder("We chargin UwU", "Lorem ipsum dolor sit amet",""),
+            WebtoonFolder("We chargin 404", "Lorem ipsum dolor sit amet",""),
+            WebtoonFolder("We chargin :O", "Lorem ipsum dolor sit amet","")
         )
     }
 
