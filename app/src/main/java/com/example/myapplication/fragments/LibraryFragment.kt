@@ -20,6 +20,8 @@ import com.example.myapplication.adapters.WebtoonsRecyclerViewHolder
 import com.example.myapplication.viewModels.LibraryViewModel
 import com.example.myapplication.viewModels.ViewModelCallback
 import com.google.firebase.auth.FirebaseAuth
+import com.squareup.picasso.Picasso
+import okhttp3.OkHttpClient
 
 // This class represents a fragment in the application that displays a list of webtoons in a RecyclerView.
 class LibraryFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
@@ -40,6 +42,18 @@ class LibraryFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager
 
         // Animate the spinner
         this.animateSpinner()
+        val client = OkHttpClient.Builder()
+            .addNetworkInterceptor { chain ->
+                chain.proceed(
+                    chain.request()
+                        .newBuilder()
+                        .header("Referer", "http://m.webtoons.com/").addHeader("User-Agent","Mozilla/5.0 (Linux; Android 8.1.0; Mi MIX 2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.125 Mobile Safari/537.36")
+                        .build()
+                )
+            }
+            .build()
+
+        val Picasso = Picasso.Builder(requireActivity().baseContext) //.downloader(client.)
 
         // Fetch the list of webtoons from the ViewModel
         viewModel.getWebtoonsList(object : ViewModelCallback<List<Webtoon>> {
@@ -69,9 +83,14 @@ class LibraryFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager
 
     // This method is called when an item in the RecyclerView is drawn. It sets the title and synopsis of the webtoon on the corresponding TextViews in the item view.
     override fun onItemDraw(holder: WebtoonsRecyclerViewHolder, position: Int, item: Any?) {
+
+
         val webtoon = item as Webtoon
         holder.view.findViewById<TextView>(R.id.itemLibrary_title).text = webtoon.getTitle()
         holder.view.findViewById<TextView>(R.id.itemLibrary_synopsis).text = webtoon.getSynopsis()
+        val imageView =holder.view.findViewById<ImageView>(R.id.itemLibrary_image)
+        Picasso.get().load(webtoon.getThumbnail()).into(imageView)
+
         // This line of code is commented out. It seems to be intended for setting an image resource to an ImageView, but it's not completed.
         // holder.view.findViewById<ImageView>(R.id.itemLibrary_image).setImageResource()
     }

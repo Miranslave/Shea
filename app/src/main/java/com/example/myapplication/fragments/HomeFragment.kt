@@ -34,13 +34,22 @@ import com.google.firebase.ktx.Firebase
 
 class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
     val db = Firebase.firestore
-    val sharedPref= activity?.getPreferences(Context.MODE_PRIVATE)
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         // Inflate the layout for this fragment
         var view = inflater.inflate(R.layout.fragment_home, container, false)
 
         // Set up the RecyclerView with a grid layout to display folders in 2 columns
-        this.initRecyclerViewDisplay(view, R.id.fragmentHome_itemsList, WebtoonsFoldersListAdapter(this.getMyData(), this, R.layout.item_webtoon_folder), GridLayoutManager(context, 2))
+        this.initRecyclerViewDisplay(
+            view,
+            R.id.fragmentHome_itemsList,
+            WebtoonsFoldersListAdapter(this.getMyData(), this, R.layout.item_webtoon_folder),
+            GridLayoutManager(context, 2)
+        )
 
         return view
     }
@@ -48,8 +57,10 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
-        val floatingCreationButton: FloatingActionButton = view.findViewById(R.id.fragmentHome_newFolderButton)
-        val floatingDeleteButton: FloatingActionButton = view.findViewById(R.id.fragmentHome_deleteFolderButton)
+        val floatingCreationButton: FloatingActionButton =
+            view.findViewById(R.id.fragmentHome_newFolderButton)
+        val floatingDeleteButton: FloatingActionButton =
+            view.findViewById(R.id.fragmentHome_deleteFolderButton)
         Log.d("SharedPref", uid.toString())
         if (uid != null) {
             Dbgetter(uid)
@@ -80,7 +91,7 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
             // Set up the buttons
             builder.setPositiveButton("Créer") { _, _ ->
                 val folderTitle = titleinput.text.toString()
-                addFoldertoDb(uid,folderTitle)
+                addFoldertoDb(uid, folderTitle)
                 Dbgetter(uid)
             }
 
@@ -100,33 +111,39 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
             builder.setTitle("Choose some animals")
             Firestore().WebtoonFolder(uid, object : FirestoreCallback<List<WebtoonFolder>> {
                 override fun onSuccess(result: List<Any>) {
-                    var arraytitle:Array<String> = emptyArray()//arrayOf("a","b","c")// on doit réussire à  foutre le titre des webtoons du gars dedans :D
-                    var arraydocid:Array<String> = emptyArray()
-                    var arrayidtosend:Array<String> = emptyArray()
-                    for(doc in result) {
-                        var temp:WebtoonFolder = doc as WebtoonFolder
+                    var arraytitle: Array<String> = emptyArray()
+                    var arraydocid: Array<String> = emptyArray()
+                    var arrayidtosend: Array<String> = emptyArray()
+                    for (doc in result) {
+                        var temp: WebtoonFolder = doc as WebtoonFolder
                         arraytitle = arraytitle.plusElement(temp.getTitle())
                         arraydocid = arraydocid.plusElement(temp.getdbid())
                     }
-                        builder.setMultiChoiceItems(
-                            arraytitle,
-                            null
-                        ) { dialog, which, isChecked ->
-                            // user checked or unchecked a box
+                    builder.setMultiChoiceItems(
+                        arraytitle,
+                        null
+                    ) { dialog, which, isChecked ->
+                        // user checked or unchecked a box
 
-                            if(isChecked){
-                                Log.d("WebtoonFolderDelete","ajout de titre:"+ arraytitle[which]+" dbid:" +arraydocid[which])
-                                arrayidtosend = arrayidtosend.plusElement(arraydocid[which])
-                            }else{
-                                Log.d("WebtoonFolderDelete","suppression de titre:"+ arraytitle[which]+" dbid:" +arraydocid[which])
-                                arrayidtosend = rmvelementfromarray(arraydocid,arraydocid[which])
-                            }
+                        if (isChecked) {
+                            Log.d(
+                                "WebtoonFolderDelete",
+                                "ajout de titre:" + arraytitle[which] + " dbid:" + arraydocid[which]
+                            )
+                            arrayidtosend = arrayidtosend.plusElement(arraydocid[which])
+                        } else {
+                            Log.d(
+                                "WebtoonFolderDelete",
+                                "suppression de titre:" + arraytitle[which] + " dbid:" + arraydocid[which]
+                            )
+                            arrayidtosend = rmvelementfromarray(arraydocid, arraydocid[which])
                         }
+                    }
 
                     // add OK and Cancel buttons
                     builder.setPositiveButton("OK") { dialog, which ->
                         // user clicked OK
-                        if(!arrayidtosend.isEmpty()){
+                        if (!arrayidtosend.isEmpty()) {
                             Log.d("WebtoonFolderDelete", arrayidtosend[0].toString())
                             deleteFolderfromDb(arrayidtosend.toList())
                             Dbgetter(uid)
@@ -145,24 +162,23 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
                     Toast.makeText(context, "Une erreur empêche l'affichage", Toast.LENGTH_SHORT)
                         .show()
                 }
-                // add a checkbox list
-
-                // Show the AlertDialog
 
 
             })
-        })}
-    private fun rmvelementfromarray(array: Array<String>, elmttodlt:String):Array<String>{
+        })
+    }
+
+    private fun rmvelementfromarray(array: Array<String>, elmttodlt: String): Array<String> {
         var res = emptyArray<String>()
-        for(str in array){
-            if(str != elmttodlt){
+        for (str in array) {
+            if (str != elmttodlt) {
                 res.plusElement(str)
             }
         }
         return res
     }
 
-    private fun addFoldertoDb(uid: String, title:String){
+    private fun addFoldertoDb(uid: String, title: String) {
         val wbtfolder = hashMapOf(
             "uid" to uid,
             "title" to title,
@@ -175,20 +191,27 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
             .addOnFailureListener { e -> Log.w(TAG, "Error writing document", e) }
     }
 
-    fun deleteFolderfromDb(dbidlist: List<String>){
-        for(id in  dbidlist){
+    fun deleteFolderfromDb(dbidlist: List<String>) {
+        for (id in dbidlist) {
             db.collection("WebtoonFolder").document(id).delete()
         }
     }
 
 
-    private fun Dbgetter(uid:String){
+    private fun Dbgetter(uid: String) {
         val res: ArrayList<Any> = ArrayList()
-        Firestore().WebtoonFolder(uid,object : FirestoreCallback<List<WebtoonFolder>>{
+        Firestore().WebtoonFolder(uid, object : FirestoreCallback<List<WebtoonFolder>> {
             override fun onSuccess(result: List<Any>) {
 
-                setRecyclerViewContent(WebtoonsFoldersListAdapter(result,this@HomeFragment,R.layout.item_webtoon_folder))
+                setRecyclerViewContent(
+                    WebtoonsFoldersListAdapter(
+                        result,
+                        this@HomeFragment,
+                        R.layout.item_webtoon_folder
+                    )
+                )
             }
+
             override fun onError(e: Throwable) {
 
                 Log.d("Error", e.toString())
@@ -196,17 +219,18 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
             }
         })
     }
+
     // Give folders name to view
     private fun getMyData(): List<Any> {
 
         return listOf(
-            WebtoonFolder("We chargin :D", "Lorem ipsum dolor sit amet",""),
-            WebtoonFolder("We chargin :V",  "Lorem ipsum dolor sit amet",""),
-            WebtoonFolder("We chargin :C", "Lorem ipsum dolor sit amet",""),
-            WebtoonFolder("We chargin (-_-')","Lorem ipsum dolor sit amet","" ),
-            WebtoonFolder("We chargin UwU", "Lorem ipsum dolor sit amet",""),
-            WebtoonFolder("We chargin 404", "Lorem ipsum dolor sit amet",""),
-            WebtoonFolder("We chargin :O", "Lorem ipsum dolor sit amet","")
+            WebtoonFolder("We chargin :D", "Lorem ipsum dolor sit amet", ""),
+            WebtoonFolder("We chargin :V", "Lorem ipsum dolor sit amet", ""),
+            WebtoonFolder("We chargin :C", "Lorem ipsum dolor sit amet", ""),
+            WebtoonFolder("We chargin (-_-')", "Lorem ipsum dolor sit amet", ""),
+            WebtoonFolder("We chargin UwU", "Lorem ipsum dolor sit amet", ""),
+            WebtoonFolder("We chargin 404", "Lorem ipsum dolor sit amet", ""),
+            WebtoonFolder("We chargin :O", "Lorem ipsum dolor sit amet", "")
         )
     }
 
@@ -220,7 +244,6 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
         mainActivity?.changeFragment(WebtoonFolderDetailsFragment(webtoonFolder))
         mainActivity?.changeTitle(webtoonFolder.getTitle())
     }
-
 
 
     // Set each item folder title to the view
