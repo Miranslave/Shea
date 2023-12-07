@@ -13,6 +13,7 @@ import androidx.compose.runtime.setValue
 import com.example.myapplication.R
 import com.example.myapplication.viewModels.UserViewModel
 import com.google.firebase.auth.FirebaseAuth
+import kotlin.system.exitProcess
 
 
 class LoginActivity : AppCompatActivity() {
@@ -46,12 +47,15 @@ class LoginActivity : AppCompatActivity() {
         startActivity(intent)
     }
     private fun connect(email:String,password:String){
+        if(email.isNullOrBlank() || password.isNullOrBlank()){
+            Toast.makeText(baseContext,"Credentials missing", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         FirebaseAuth.getInstance().signInWithEmailAndPassword(email,password).addOnCompleteListener(this){
                 task->
             if (task.isSuccessful){
                 Log.d("TAG","Sign in sucess")
-
-
                 showHomeActivity()
             }else{
                 Log.w("TAG","Sign in Failed",task.exception)
