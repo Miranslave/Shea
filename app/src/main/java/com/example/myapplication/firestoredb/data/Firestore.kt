@@ -2,6 +2,7 @@ package com.example.myapplication.firestoredb.data
 
 import android.annotation.SuppressLint
 import android.util.Log
+import com.example.myapplication.Webtoon
 import com.example.myapplication.WebtoonFolder
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -20,9 +21,15 @@ class Firestore() {
             .addOnSuccessListener { result ->
                 for (document in result) {
                     if(document.data.get("uid")==uid){
-                    res.add(WebtoonFolder(document.data.get("title").toString()
-                        ,document.data.get("description").toString(),document.id))
+                        val folder = WebtoonFolder(document.data.get("title").toString(),document.data.get("description").toString(),document.id)
+                        val webtoonsIdList = document.data["webtoonsid"] as? ArrayList<Long>
+
+                        for( i in 0..((webtoonsIdList?.size)?.minus(1) ?: 0)){
+                            webtoonsIdList?.get(i)?.let { folder.addWebtoon(it) }
                         }
+
+                        res.add(folder)
+                    }
                 }
 
 
