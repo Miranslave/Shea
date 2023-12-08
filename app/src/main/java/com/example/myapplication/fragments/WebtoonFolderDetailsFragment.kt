@@ -1,6 +1,7 @@
 package com.example.myapplication.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,6 +28,10 @@ class WebtoonFolderDetailsFragment(private val folder: WebtoonFolder) : Fragment
         val title: TextView = view.findViewById(R.id.fragmentWebtoonFolderDetails_titleTextField)
         title.text = folder.getTitle()
         title.isEnabled = false
+
+        // Set the description
+        val description: TextView = view.findViewById(R.id.fragmentWebtoonFolderDetails_descriptionText)
+        description.text = folder.getDescription()
 
         // Set the back button to go back to the home page
         view.findViewById<TextView>(R.id.fragmentWebtoonFolderDetails_previousPageButton).setOnClickListener {
