@@ -108,7 +108,7 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
             // setup the alert builder
 
             val builder = AlertDialog.Builder(context)
-            builder.setTitle("Choose some animals")
+            builder.setTitle("Choisit les dossiers à supprimer")
             Firestore().WebtoonFolder(uid, object : FirestoreCallback<List<WebtoonFolder>> {
                 override fun onSuccess(result: List<Any>) {
                     var arraytitle: Array<String> = emptyArray()
@@ -183,6 +183,7 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
             "uid" to uid,
             "title" to title,
             "description" to "a link  au + ",
+            "webtoonsid" to arrayListOf<Int>()
         )
 
         db.collection("WebtoonFolder").document()
@@ -198,11 +199,10 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
     }
 
 
+    // Mets à jour les folders *
     private fun Dbgetter(uid: String) {
-        val res: ArrayList<Any> = ArrayList()
         Firestore().WebtoonFolder(uid, object : FirestoreCallback<List<WebtoonFolder>> {
             override fun onSuccess(result: List<Any>) {
-
                 setRecyclerViewContent(
                     WebtoonsFoldersListAdapter(
                         result,
@@ -240,7 +240,7 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
 
         val mainActivity = (activity as? BaseActivity)
         val webtoonFolder = item as WebtoonFolder
-
+        Log.d("Info", "Webtoon Folder current info:" + webtoonFolder.toString())
         mainActivity?.changeFragment(WebtoonFolderDetailsFragment(webtoonFolder))
         mainActivity?.changeTitle(webtoonFolder.getTitle())
     }
