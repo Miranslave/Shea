@@ -11,6 +11,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.myapplication.Image.ImageLoader
 import com.example.myapplication.R
 import com.example.myapplication.Webtoon
 import com.example.myapplication.activities.BaseActivity
@@ -19,7 +20,9 @@ import com.example.myapplication.adapters.WebtoonsListAdapter
 import com.example.myapplication.adapters.WebtoonsRecyclerViewHolder
 import com.example.myapplication.viewModels.LibraryViewModel
 import com.example.myapplication.viewModels.ViewModelCallback
+import com.google.errorprone.annotations.RequiredModifiers
 import com.google.firebase.auth.FirebaseAuth
+import com.squareup.picasso.OkHttp3Downloader
 import com.squareup.picasso.Picasso
 import okhttp3.OkHttpClient
 
@@ -27,10 +30,12 @@ import okhttp3.OkHttpClient
 class LibraryFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
     // Initialize the ViewModel
     private var viewModel = LibraryViewModel()
+    private lateinit var imageLoader:ImageLoader
 
     // This method inflates the layout for this fragment and initializes the RecyclerView with a grid layout to display folders in 2 columns.
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val  user = FirebaseAuth.getInstance().currentUser
+        imageLoader= ImageLoader("https://webtoon-phinf.pstatic.net", requireContext())
         var view = inflater.inflate(R.layout.fragment_library, container, false)
         this.initRecyclerViewDisplay(view, R.id.fragmentLibrary_itemsList, WebtoonsListAdapter(listOf<Webtoon>(), this, R.layout.item_library_webtoon), LinearLayoutManager(context))
         return view
@@ -42,18 +47,9 @@ class LibraryFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager
 
         // Animate the spinner
         this.animateSpinner()
-        val client = OkHttpClient.Builder()
-            .addNetworkInterceptor { chain ->
-                chain.proceed(
-                    chain.request()
-                        .newBuilder()
-                        .header("Referer", "http://m.webtoons.com/").addHeader("User-Agent","Mozilla/5.0 (Linux; Android 8.1.0; Mi MIX 2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.125 Mobile Safari/537.36")
-                        .build()
-                )
-            }
-            .build()
 
-        val Picasso = Picasso.Builder(requireActivity().baseContext) //.downloader(client.)
+
+
 
         // Fetch the list of webtoons from the ViewModel
         viewModel.getWebtoonsList(object : ViewModelCallback<List<Webtoon>> {
@@ -79,6 +75,7 @@ class LibraryFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager
         val webtoon = item as Webtoon
         mainActivity?.changeTitle(webtoon.getTitle())
         mainActivity?.changeFragment(WebtoonDetailsFragment(webtoon))
+        Log.d("Thumbnail",webtoon.getThumbnail())
     }
 
     // This method is called when an item in the RecyclerView is drawn. It sets the title and synopsis of the webtoon on the corresponding TextViews in the item view.
@@ -88,11 +85,11 @@ class LibraryFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager
         val webtoon = item as Webtoon
         holder.view.findViewById<TextView>(R.id.itemLibrary_title).text = webtoon.getTitle()
         holder.view.findViewById<TextView>(R.id.itemLibrary_synopsis).text = webtoon.getSynopsis()
-        val imageView =holder.view.findViewById<ImageView>(R.id.itemLibrary_image)
-        Picasso.get().load(webtoon.getThumbnail()).into(imageView)
 
-        // This line of code is commented out. It seems to be intended for setting an image resource to an ImageView, but it's not completed.
-        // holder.view.findViewById<ImageView>(R.id.itemLibrary_image).setImageResource()
+
+        val imageView =holder.view.findViewById<ImageView>(R.id.itemLibrary_image)
+        imageLoader.load(imageView,webtoon.getThumbnail())
+
     }
 
     private fun animateSpinner() {

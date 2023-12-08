@@ -8,8 +8,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import com.example.myapplication.Image.ImageLoader
 import com.example.myapplication.R
 import com.example.myapplication.Webtoon
 import com.example.myapplication.activities.BaseActivity
@@ -18,7 +20,9 @@ import com.example.myapplication.activities.BaseActivity
 class WebtoonDetailsFragment(private val webtoon: Webtoon) : Fragment() {
 
     // Inflate the layout for this fragment
+    private lateinit var imageLoader: ImageLoader
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        imageLoader= ImageLoader("https://webtoon-phinf.pstatic.net", requireContext())
         return inflater.inflate(R.layout.fragment_webtoon_details, container, false)
     }
 
@@ -48,7 +52,8 @@ class WebtoonDetailsFragment(private val webtoon: Webtoon) : Fragment() {
         view.findViewById<TextView>(R.id.fragmentWebtoonDetails_genre).text = webtoon.getGenre()
         view.findViewById<TextView>(R.id.fragmentWebtoonDetails_theme).text = webtoon.getTheme()
         view.findViewById<TextView>(R.id.fragmentWebtoonDetails_totalEpisodes).text = webtoon.getTotalEpisodeCount().toString()
-
+        val imgview = view.findViewById<ImageView>(R.id.fragmentWebtoonDetails_imageView)
+        imageLoader.load(imgview,webtoon.getThumbnail())
         // Set the onClickListener for the URL button
         view.findViewById<ImageButton>(R.id.fragmentWebtoonDetails_urlButton).setOnClickListener {
             val intent = Intent(Intent.ACTION_VIEW)
