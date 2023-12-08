@@ -29,15 +29,28 @@ class WebtoonFolder {
         return webtoons
     }
 
-    fun addWebtoon(webtoon: Webtoon) {
+    fun addWebtoon(id: Long){
+        val webtoon: Webtoon = Webtoon(id.toInt(),"","","","","","","",0)
         webtoons.add(webtoon)
     }
+
+    // Alex : la surcharge de méthode en kotlin est chelou....
+    /*fun addWebtoon(webtoon: Webtoon) {
+        webtoons.add(webtoon)
+    }*/
 
     fun removeWebtoon(webtoon: Webtoon) {
         webtoons.remove(webtoon)
     }
 
     override fun toString(): String {
-        return "WebtoonFolder(title='$title', description='$description','dbid='$dbid)"
+        val strStart : String = "WebtoonFolder(title='$title', description='$description',"
+        val strEnd : String = "',dbid='$dbid)"
+        var strMilieu : String = "webtoonsid=["
+        for(i in 0..webtoons.size-1){
+            strMilieu = strMilieu + webtoons.get(i).getId() + " "
+        }
+        strMilieu += "]"
+        return strStart+strMilieu+strEnd
     }
 }
