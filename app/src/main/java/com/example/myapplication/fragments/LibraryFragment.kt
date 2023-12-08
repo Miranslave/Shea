@@ -1,5 +1,6 @@
 package com.example.myapplication.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -36,6 +37,15 @@ class LibraryFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val  user = FirebaseAuth.getInstance().currentUser
         imageLoader= ImageLoader("https://webtoon-phinf.pstatic.net", requireContext())
+
+        // Obtenez une référence aux SharedPreferences
+        val sharedPreferences = requireContext().getSharedPreferences("NomDeVotrePreferences", Context.MODE_PRIVATE)
+    // Utilisez les méthodes getString pour récupérer les informations
+        val nomUtilisateur = sharedPreferences.getString("utilisateur", null)
+        val motDePasse = sharedPreferences.getString("motdepasse", null)
+
+
+
         var view = inflater.inflate(R.layout.fragment_library, container, false)
         this.initRecyclerViewDisplay(view, R.id.fragmentLibrary_itemsList, WebtoonsListAdapter(listOf<Webtoon>(), this, R.layout.item_library_webtoon), LinearLayoutManager(context))
         return view

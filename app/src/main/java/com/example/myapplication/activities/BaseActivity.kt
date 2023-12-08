@@ -28,14 +28,15 @@ class BaseActivity : AppCompatActivity() {
         setContentView(R.layout.activity_base)
         val  user = FirebaseAuth.getInstance().currentUser
 
-        // shared pref
-        val sharedPref = this?.getPreferences(Context.MODE_PRIVATE) ?: return
-        with (sharedPref.edit()) {
-            putString("uid",user?.uid.toString())
-            putString("user_email",user?.email.toString())
-            Log.d("SharedPref", user?.uid.toString())
-            apply()
-        }
+
+        // Obtenez une référence aux SharedPreferences
+        val sharedPreferences = getSharedPreferences("User", Context.MODE_PRIVATE)
+        // Obtenez un éditeur SharedPreferences pour effectuer des modifications
+        val editor = sharedPreferences.edit()
+        // Ajoutez les informations d'identification
+        editor.putString("userid", user?.uid.toString())
+        // Appliquez les modifications
+        editor.apply()
 
 
         viewModel.user_id = user?.uid.toString()

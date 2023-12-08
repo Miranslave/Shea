@@ -1,8 +1,10 @@
 package com.example.myapplication.viewModels
 
 // Import necessary Android and project-specific classes
+import android.content.Context
 import android.util.Log
 import androidx.activity.viewModels
+import androidx.lifecycle.viewModelScope
 import com.example.myapplication.Webtoon
 import com.example.myapplication.WebtoonFolder
 import com.example.myapplication.enums.Langage
@@ -14,6 +16,10 @@ import com.example.myapplication.network.originals.titleList.OriginalTitleList
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 // Define a ViewModel for the Library
 class LibraryViewModel : CustomViewModel() {
@@ -21,14 +27,13 @@ class LibraryViewModel : CustomViewModel() {
 
     val db = Firebase.firestore
 
-
-
     // Define a list of Webtoon IDs
     private var webtoonsIdsList: List<Int> = listOf(75, 418, 676, 5727, 4940, 3485, 2467)
 
     // Function to get a list of Webtoons
     fun getWebtoonsList(callback: ViewModelCallback<List<Webtoon>>) {
-        //webtoonsIdsList = dbgetuserreadingidlist("oNL8aBClglMLS7wujwKfUu86TsF3") // ne marche pas resultat vide
+        //webtoonsIdsList = getUserReadingIdList("oNL8aBClglMLS7wujwKfUu86TsF3")
+        Log.d("Data lecture",webtoonsIdsList.size.toString())
         executeInCoroutineScope(WebtoonOriginalsApi.retrofitService::getTitlesList, listOf(Langage.en), object : ViewModelCallback<OriginalRequestTitleList> {
             // Handle successful network request
             override fun onSuccess(result: OriginalRequestTitleList) {
@@ -60,19 +65,39 @@ class LibraryViewModel : CustomViewModel() {
             }
         })
     }
-    fun dbgetuserreadingidlist(uid:String):List<Int>{
-        var res:List<Int> = emptyList()
-        db.collection("UserData").get().addOnSuccessListener(){result ->
-            for (document in result) {
-                if(document.data.get("uid")==uid){
-                    res = document.data.get("Read") as List<Int>
+    fun getUserReadingIdList(uid: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val readingList = dbgetuserreadingidlist(uid)
+                // Utilisez la liste `readingList` ici
 
-                     Log.d("Data lecture",document.data.get("Read").toString())
-                }
-
+                // Par exemple, mettez à jour le LiveData avec les résultats
+                // Si vous utilisez LiveData dans votre ViewModel
+                // updateLiveData.postValue(readingList)
+            } catch (e: Exception) {
+                // Gérer les erreurs
+            }
         }
-
     }
-        return res
+
+    suspend fun dbgetuserreadingidlist(uid: String): List<Int> = suspendCoroutine { continuation ->
+        val res: MutableList<Int> = mutableListOf()
+
+        db.collection("UserData")
+            .whereEqualTo("uid", uid)
+            .get()
+            .addOnSuccessListener { result ->
+                for (document in result) {
+                    val readList = document.data["Read"] as? List<Int>
+                    if (readList != null) {
+                        res.addAll(readList)
+                        Log.d("Data lecture", readList.toString())
+                    }
+                }
+                continuation.resume(res)
+            }
+            .addOnFailureListener {
+                continuation.resume(emptyList()) // Gérer l'échec de la requête
+            }
     }
 }
