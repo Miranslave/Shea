@@ -15,33 +15,33 @@ import retrofit2.http.Query
 
 
 const val ORIGINAL_URL = "https://webtoon.p.rapidapi.com/originals/"
-const val Headerkey = "X-RapidAPI-Key: 83abec409emshdaef86121bb4e5ep125787jsnd79326c26832"
-const val Headerhost = "X-RapidAPI-Host: webtoon.p.rapidapi.com"
+const val HeaderKey = "X-RapidAPI-Key: 83abec409emshdaef86121bb4e5ep125787jsnd79326c26832"
+const val HeaderHost = "X-RapidAPI-Host: webtoon.p.rapidapi.com"
 
 private val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
 private val retrofit = Retrofit.Builder().addConverterFactory(MoshiConverterFactory.create(moshi)).baseUrl(ORIGINAL_URL).build()
 
 interface WebtoonOriginalsApiService {
-    @Headers(Headerkey, Headerhost)
+    @Headers(HeaderKey, HeaderHost)
     @GET("genres/list")
     suspend fun getGenresList(
         @Query("lang") lang: Langage,
     ): OriginalRequestGenreList
 
-    @Headers(Headerkey, Headerhost)
+    @Headers(HeaderKey, HeaderHost)
     @GET("titles/list")
     suspend fun getTitlesList(
         @Query("lang") lang: Langage,
     ): OriginalRequestTitleList
 
-    @Headers(Headerkey, Headerhost)
+    @Headers(HeaderKey, HeaderHost)
     @GET("titles/list-by-rank")
     suspend fun getTitlesListByRank(
         @Query("count") count: Int,
         @Query("lang") lang: Langage,
     ): TitleListByRankRequest
 
-    @Headers(Headerkey, Headerhost)
+    @Headers(HeaderKey, HeaderHost)
     @GET("titles/get-info")
     suspend fun getTitleInfo(
         @Query("titleNo") titleNo: Int,

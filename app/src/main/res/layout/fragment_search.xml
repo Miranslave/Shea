@@ -17,6 +17,7 @@
             android:orientation="horizontal">
 
             <SearchView
+                android:id="@+id/fragmentSearch_searchView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:iconifiedByDefault="false">
@@ -32,10 +33,21 @@
             android:text="X résultats" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/fragmentSearch_settingsItemsList"
+            android:id="@+id/fragmentSearch_itemsList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingTop="10dp" />
+            android:paddingTop="10dp" >
+
+        </androidx.recyclerview.widget.RecyclerView>
+
+        <ImageView
+            android:id="@+id/loading"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:padding="150dp"
+            android:src="@drawable/spinner"
+            android:visibility="visible" />
     </LinearLayout>
 
 </FrameLayout>

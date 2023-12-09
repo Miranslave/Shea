@@ -29,7 +29,7 @@ class LibraryFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager
     // This method inflates the layout for this fragment and initializes the RecyclerView with a grid layout to display folders in 2 columns.
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val user = FirebaseAuth.getInstance().currentUser
-        imageLoader = ImageLoader("https://webtoon-phinf.pstatic.net", requireContext())
+        this.imageLoader = ImageLoader("https://webtoon-phinf.pstatic.net", requireContext())
 
         val view = inflater.inflate(R.layout.fragment_library, container, false)
         this.initRecyclerViewDisplay(view, R.id.fragmentLibrary_itemsList, WebtoonsListAdapter(listOf<Webtoon>(), this, R.layout.item_library_webtoon), LinearLayoutManager(context))
@@ -44,7 +44,7 @@ class LibraryFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager
         val loader: Spinner = Spinner(this)
 
         // Fetch the list of webtoons from the ViewModel
-        viewModel.getWebtoonsList(object : ViewModelCallback<List<Webtoon>> {
+        this.viewModel.getWebtoonsList(object : ViewModelCallback<List<Webtoon>> {
             // On successful fetch, update the RecyclerView with the fetched data.
             override fun onSuccess(result: List<Webtoon>) {
                 Log.d("Success", result.toString())
@@ -55,7 +55,7 @@ class LibraryFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager
             // On error, log the error and show a toast message.
             override fun onError(e: Throwable) {
                 Log.d("Error", e.toString())
-                Toast.makeText(context, "Une erreur empêche l'affichage", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, getString(R.string.display_error), Toast.LENGTH_SHORT).show()
                 loader.stop()
             }
         })
@@ -75,10 +75,6 @@ class LibraryFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager
         val webtoon = item as Webtoon
         holder.view.findViewById<TextView>(R.id.itemLibrary_title).text = webtoon.getTitle()
         holder.view.findViewById<TextView>(R.id.itemLibrary_synopsis).text = webtoon.getSynopsis()
-
-        val imageView = holder.view.findViewById<ImageView>(R.id.itemLibrary_image)
-        imageLoader.load(imageView, webtoon.getThumbnail())
+        this.imageLoader.load(holder.view.findViewById(R.id.itemLibrary_image), webtoon.getThumbnail())
     }
-
-
 }
