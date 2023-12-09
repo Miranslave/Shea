@@ -16,6 +16,7 @@ open class FragmentRecyclerViewManager : Fragment() {
         // Assign passed parameters to class variables
         this.viewManager = layout
         this.viewAdapter = adapt
+
         // Initialize RecyclerView with passed parameters
         this.recyclerView = view.findViewById<RecyclerView>(recyclerViewId).apply {
             setHasFixedSize(true)
@@ -29,5 +30,9 @@ open class FragmentRecyclerViewManager : Fragment() {
         // Assign passed adapter to class variable and set it to RecyclerView
         this.viewAdapter = adapter
         this.recyclerView.adapter = this.viewAdapter
+    }
+
+    fun getRecyclerView(): RecyclerView {
+        return this.recyclerView
     }
 }

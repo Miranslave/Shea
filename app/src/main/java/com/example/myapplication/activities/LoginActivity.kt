@@ -21,15 +21,6 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        // Check if the user is already logged in
-        val sharedPreferences = getSharedPreferences("MyApp", Context.MODE_PRIVATE)
-        val isUserLoggedIn = sharedPreferences.getBoolean("isUserLoggedIn", false)
-
-        if (isUserLoggedIn) {
-            showHomeActivity()
-            finish()
-        }
-
         // Bind creation button
         val createAccountButton = findViewById<TextView>(R.id.activityLogin_createAccountButton)
         createAccountButton.setOnClickListener {
@@ -42,6 +33,19 @@ class LoginActivity : AppCompatActivity() {
             mail = findViewById<EditText>(R.id.activityLogin_mailAddress).text.toString()
             pass = findViewById<EditText>(R.id.activityLogin_password).text.toString()
             connect(mail, pass)
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        // Check if the user is already logged in
+        val sharedPreferences = getSharedPreferences("MyApp", Context.MODE_PRIVATE)
+        val isUserLoggedIn = sharedPreferences.getBoolean("isUserLoggedIn", false)
+
+        if (isUserLoggedIn) {
+            showHomeActivity()
+            finish()
         }
     }
 

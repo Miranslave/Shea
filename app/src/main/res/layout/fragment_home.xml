@@ -75,11 +75,12 @@
         android:id="@+id/fragmentHome_deleteFolderButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|left"
+        android:layout_gravity="bottom|right"
         android:layout_margin="15dp"
         android:clickable="true"
         android:hapticFeedbackEnabled="true"
         android:src="@drawable/bookmark_slash"
+        android:visibility="invisible"
         app:backgroundTint="@color/main_red" />
 
 </FrameLayout>
