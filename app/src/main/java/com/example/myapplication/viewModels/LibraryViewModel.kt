@@ -2,26 +2,18 @@ package com.example.myapplication.viewModels
 
 // Import necessary Android and project-specific classes
 import android.util.Log
-import androidx.activity.viewModels
 import com.example.myapplication.Webtoon
-import com.example.myapplication.WebtoonFolder
 import com.example.myapplication.enums.Langage
 import com.example.myapplication.network.WebtoonOriginalsApi
-import com.example.myapplication.network.originals.titleInfo.TitleGetInfoRequest
 import com.example.myapplication.network.originals.titleList.OriginalRequestTitleList
 import com.example.myapplication.network.originals.titleList.OriginalTitle
 import com.example.myapplication.network.originals.titleList.OriginalTitleList
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 // Define a ViewModel for the Library
 class LibraryViewModel : CustomViewModel() {
-
-
-    val db = Firebase.firestore
-
-
+    private val db = Firebase.firestore
 
     // Define a list of Webtoon IDs
     private var webtoonsIdsList: List<Int> = listOf(75, 418, 676, 5727, 4940, 3485, 2467)
@@ -55,24 +47,29 @@ class LibraryViewModel : CustomViewModel() {
 
             // Handle error in network request
             override fun onError(e: Throwable) {
-                error(e)
+                // Catch IllegalStateExceptions because it means that the network request was successful but the response was not successfully shown
+                // This is because the user changed the fragment before the response was shown
+                if (e is IllegalStateException)
+                    return
+
                 callback.onError(e)
             }
         })
     }
-    fun dbgetuserreadingidlist(uid:String):List<Int>{
-        var res:List<Int> = emptyList()
-        db.collection("UserData").get().addOnSuccessListener(){result ->
+
+    fun getDatabaseUserReadingList(uid: String): List<Int> {
+        var res: List<Int> = emptyList()
+        db.collection("UserData").get().addOnSuccessListener() { result ->
             for (document in result) {
-                if(document.data.get("uid")==uid){
+                if (document.data.get("uid") == uid) {
                     res = document.data.get("Read") as List<Int>
 
-                     Log.d("Data lecture",document.data.get("Read").toString())
+                    Log.d("Data lecture", document.data.get("Read").toString())
                 }
 
-        }
+            }
 
-    }
+        }
         return res
     }
 }
