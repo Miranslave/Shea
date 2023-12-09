@@ -64,7 +64,7 @@
             android:paddingTop="10dp" />
 
         <ImageView
-            android:id="@+id/fragmentLibrary_loading"
+            android:id="@+id/loading"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"

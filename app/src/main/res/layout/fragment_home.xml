@@ -43,11 +43,22 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="0"
-            android:paddingTop="10dp" />
+            android:paddingTop="10dp" >
+
+        </androidx.recyclerview.widget.RecyclerView>
 
 
     </LinearLayout>
 
+
+    <ImageView
+        android:id="@+id/loading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:padding="150dp"
+        android:src="@drawable/spinner"
+        android:visibility="visible" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fragmentHome_newFolderButton"
