@@ -37,7 +37,7 @@ class SearchFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager 
         this.initRecyclerViewDisplay(view, R.id.fragmentSearch_itemsList, WebtoonsListAdapter(listOf<Webtoon>(), this, R.layout.item_library_webtoon_list), LinearLayoutManager(context))
 
         // Start the loading animation
-        this.spinner = Spinner(this.requireView().findViewById(R.id.fragmentSearch_loading), false)
+        this.spinner = Spinner(view.findViewById(R.id.fragmentSearch_loading))
 
         // Get the SearchView and bind a listener to it
         val searchView = view.findViewById<SearchView>(R.id.fragmentSearch_searchView)

@@ -37,7 +37,6 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
 
     // Other attributes
     private val viewModel: HomeViewModel = HomeViewModel()
-    private val db: FirebaseFirestore = Firebase.firestore
     private lateinit var spinner: Spinner
     private lateinit var floatingDeleteButton: FloatingActionButton
 
@@ -81,7 +80,7 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
             // Creation button
             builder.setPositiveButton(getString(R.string.create)) { _, _ ->
                 val folderTitle = titleinput.text.toString()
-                addFolderToDatabase(uid, folderTitle)
+                this.viewModel.addFolderToDatabase(uid, folderTitle)
                 showDatabaseFolders(uid)
             }
 
@@ -104,7 +103,7 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
 
             // Deletion button
             builder.setPositiveButton(getString(R.string.delete)) { _, _ ->
-                deleteFolderFromDatabase(this.deleteFolderList)
+                this.viewModel.deleteFolderFromDatabase(this.deleteFolderList)
                 showDatabaseFolders(uid)
                 switchDeleteMode(false)
             }
@@ -121,18 +120,6 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
 
         // Listener for the search bar
         searchBar.setOnQueryTextListener(searchQueryListener())
-    }
-
-    private fun addFolderToDatabase(uid: String, title: String) {
-        val webtoonFolder = hashMapOf(
-            "uid" to uid, "title" to title, "description" to "a link  au +", "webtoonsid" to arrayListOf<Int>()
-        )
-
-        db.collection("WebtoonFolder").document().set(webtoonFolder).addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully written!") }.addOnFailureListener { e -> Log.w(TAG, "Error writing document", e) }
-    }
-
-    private fun deleteFolderFromDatabase(databaseIdsList: List<String>) {
-        for (id in databaseIdsList) db.collection("WebtoonFolder").document(id).delete()
     }
 
     // Update the RecyclerView with the fetched data

@@ -46,23 +46,6 @@
                     android:textSize="14sp"
                     android:textStyle="bold" />
 
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/itemLibrary_chip"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_weight="0"
-                    android:text="Finis"
-                    android:textAlignment="textStart"
-                    android:textAllCaps="true"
-                    android:textSize="8sp"
-                    app:chipBackgroundColor="@color/main_gray"
-                    app:chipEndPadding="0dp"
-                    app:chipStartPadding="0dp"
-                    app:chipStrokeColor="@color/main_dark_blue"
-                    app:textEndPadding="10dp"
-                    app:textStartPadding="10dp" />
-
             </LinearLayout>
 
             <TextView

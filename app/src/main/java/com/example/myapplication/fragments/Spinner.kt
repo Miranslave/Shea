@@ -11,11 +11,15 @@ class Spinner(loadingElem: ImageView, autoStart: Boolean = true) {
 
     init {
         this.loadingElement = loadingElem
-        if (autoStart) this.start()
+        if (autoStart) {
+            this.start()
+        }
     }
 
     fun start() {
-        if (this.started) return
+        if (this.started) {
+            return
+        }
 
         this.started = true
         val rotate = RotateAnimation(

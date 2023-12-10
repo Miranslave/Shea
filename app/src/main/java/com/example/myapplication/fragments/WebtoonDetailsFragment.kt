@@ -153,11 +153,9 @@ class WebtoonDetailsFragment(private val webtoon: Webtoon) : Fragment() {
         imageLoader.load(imgview, webtoon.getThumbnail())
 
         // Change the bookmark icon if the Webtoon is already in the user's library
-        firestore.WebtoonFolder(uid, object : FirestoreCallback<List<WebtoonFolder>> {
-            override fun onSuccess(result: List<Any>) {
+        firestore.getUserWebtoonFolders(uid, object : FirestoreCallback<List<WebtoonFolder>> {
+            override fun onSuccess(result: List<WebtoonFolder>) {
                 result.forEach { doc ->
-                    doc as WebtoonFolder
-
                     if (doc.getWebtoons().any { it.getId() == webtoon.getId() }) {
                         view.findViewById<ImageButton>(R.id.fragmentWebtoonDetails_saveButton).setImageResource(R.drawable.bookmark_slash)
                     }
@@ -197,14 +195,13 @@ class WebtoonDetailsFragment(private val webtoon: Webtoon) : Fragment() {
         val builder = AlertDialog.Builder(context)
         builder.setTitle(getString(R.string.add_to_folder))
 
-        firestore.WebtoonFolder(uid, object : FirestoreCallback<List<WebtoonFolder>> {
-            override fun onSuccess(result: List<Any>) {
-                val folderInfo = result.map { it as WebtoonFolder }
-                val folderTitles = folderInfo.map { it.getTitle() }.toTypedArray()
-                val folderIds = folderInfo.map { it.getdbid() }
-                val initialFavorites = folderInfo.filter { folder -> folder.getWebtoons().any { it.getId() == webtoon.getId() } }.map { it.getdbid() }.toMutableList()
+        firestore.getUserWebtoonFolders(uid, object : FirestoreCallback<List<WebtoonFolder>> {
+            override fun onSuccess(result: List<WebtoonFolder>) {
+                val folderTitles = result.map { it.getTitle() }.toTypedArray()
+                val folderIds = result.map { it.getdbid() }
+                val initialFavorites = result.filter { folder -> folder.getWebtoons().any { it.getId() == webtoon.getId() } }.map { it.getdbid() }.toMutableList()
 
-                val checkedItems = BooleanArray(folderInfo.size) { folderIds[it] in initialFavorites }
+                val checkedItems = BooleanArray(result.size) { folderIds[it] in initialFavorites }
 
                 builder.setMultiChoiceItems(folderTitles, checkedItems) { _, which, isChecked ->
                     if (isChecked) {
