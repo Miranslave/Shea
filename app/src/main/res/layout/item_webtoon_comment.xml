@@ -14,13 +14,6 @@
         android:layout_height="match_parent"
         android:orientation="horizontal">
 
-        <ImageView
-            android:id="@+id/itemWebtoonComment_image"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="5"
-            app:srcCompat="@drawable/user" />
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -42,32 +35,11 @@
                     android:layout_weight="1"
                     android:gravity="center_vertical"
                     android:minHeight="25dp"
-                    android:text="Comment title"
+                    android:text="userName"
                     android:textAlignment="textStart"
                     android:textAllCaps="true"
                     android:textSize="14sp"
                     android:textStyle="bold" />
-
-                <Button
-                    android:id="@+id/imageButton3"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="4"
-                    android:adjustViewBounds="true"
-                    android:background="@drawable/border_radius"
-                    android:maxWidth="5dp"
-                    android:maxHeight="5dp"
-                    android:paddingLeft="5dp"
-                    android:paddingTop="0dp"
-                    android:paddingRight="5dp"
-                    android:paddingBottom="0dp"
-                    android:scaleType="centerInside"
-                    android:text="325"
-                    android:textColorLink="@color/white"
-                    android:textSize="12sp"
-                    app:icon="@drawable/heart"
-                    app:iconPadding="0dp" />
 
             </LinearLayout>
 

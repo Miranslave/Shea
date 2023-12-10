@@ -14,11 +14,15 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.Image.ImageLoader
 import com.example.myapplication.R
 import com.example.myapplication.Webtoon
 import com.example.myapplication.WebtoonFolder
 import com.example.myapplication.activities.BaseActivity
+import com.example.myapplication.adapters.CommentAdapter
+import com.example.myapplication.firestoredb.data.Comment
 import com.example.myapplication.firestoredb.data.Firestore
 import com.example.myapplication.firestoredb.data.FirestoreCallback
 import com.google.firebase.auth.FirebaseAuth
@@ -30,6 +34,7 @@ class WebtoonDetailsFragment(private val webtoon: Webtoon) : Fragment() {
 
     // Inflate the layout for this fragment
     private lateinit var imageLoader: ImageLoader
+    lateinit var recyclerView: RecyclerView
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         imageLoader= ImageLoader("https://webtoon-phinf.pstatic.net", requireContext())
         return inflater.inflate(R.layout.fragment_webtoon_details, container, false)
@@ -48,7 +53,42 @@ class WebtoonDetailsFragment(private val webtoon: Webtoon) : Fragment() {
             baseActivity?.changeFragment(LibraryFragment())
             baseActivity?.changeTitle(getString(R.string.library_tab_title))
         }
+
+        val commentsList : List<Comment> = getComments()
+        Log.d("WEBTOONCOMMENT", commentsList.toString())
+        recyclerView = view.findViewById(R.id.fragmentWebtoonDetails_commentsList)
+
+        val adapter = CommentAdapter(commentsList)
+        recyclerView.adapter = adapter
     }
+
+    private fun getComments(): List<Comment> {
+        val db = FirebaseFirestore.getInstance()
+        val commentList = mutableListOf<Comment>()
+        db.collection("Webtoon")
+            .get()
+            .addOnSuccessListener { result ->
+                for(document in result) {
+                    Log.d("WEBTOONCOMMENT", document.data.get("id").toString())
+                    Log.d("WEBTOONCOMMENT",  webtoon.getId().toString())
+                    if(document.data.get("id").toString() == webtoon.getId().toString()){
+                        val comments = document.data.get("comments") as ArrayList<*>
+                        for(comment in comments ){
+                            comment as HashMap<String,String>
+                            val newComment = Comment(comment.get("userid") as String, comment.get("comment") as String)
+                            commentList.add(newComment)
+                        }
+                    }
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.w("WEBTOONCOMMENT", "Error getting documents.", exception)
+            }
+
+        Log.d("WEBTOONCOMMENT", commentList.toString())
+        return commentList
+    }
+
 
     // Show the details of the Webtoon
     private fun showWebtoonDetails(view: View) {
@@ -179,5 +219,23 @@ class WebtoonDetailsFragment(private val webtoon: Webtoon) : Fragment() {
                     }
             }
         }
+    }
+
+    private fun addNewComment(comment : String){
+        val db = FirebaseFirestore.getInstance()
+        val newComment = hashMapOf(
+            "comment" to comment,
+            "userid" to FirebaseAuth.getInstance().currentUser
+        )
+
+        db.collection("Webtoon").document("5727").collection("comments")
+            .add(newComment)
+            .addOnSuccessListener { documentReference ->
+                Log.w("WEBTOONCOMMENT", "SUCCESS ADDING COMMENT")
+            }
+            .addOnFailureListener{
+                Log.w("Failed", "Error adding comment", it)
+            }
+
     }
 }
