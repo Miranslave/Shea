@@ -1,23 +1,37 @@
 package com.example.myapplication.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myapplication.activities.BaseActivity
 import com.example.myapplication.R
+import com.example.myapplication.adapters.RecyclerViewEventsManager
+import com.example.myapplication.adapters.WebtoonsListAdapter
+import com.example.myapplication.adapters.WebtoonsRecyclerViewHolder
+import com.example.myapplication.image.ImageLoader
+import com.example.myapplication.models.Webtoon
 import com.example.myapplication.models.WebtoonFolder
+import com.example.myapplication.viewModels.LibraryViewModel
+import com.example.myapplication.viewModels.ViewModelCallback
 
-class WebtoonFolderDetailsFragment(private val folder: WebtoonFolder) : Fragment() {
+class WebtoonFolderDetailsFragment(private val folder: WebtoonFolder) : FragmentRecyclerViewManager(),
+    RecyclerViewEventsManager {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_webtoon_folder_details, container, false)
+        val view = inflater.inflate(R.layout.fragment_webtoon_folder_details, container, false)
+        this.initRecyclerViewDisplay(view, R.id.fragmentWebtoonFolderDetails_itemsList, WebtoonsListAdapter(listOf<Webtoon>(), this, R.layout.item_library_webtoon_list), LinearLayoutManager(context))
+
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -42,5 +56,47 @@ class WebtoonFolderDetailsFragment(private val folder: WebtoonFolder) : Fragment
         view.findViewById<AppCompatImageButton>(R.id.fragmentWebtoonFolderDetails_editButton).setOnClickListener {
             title.isEnabled = !title.isEnabled
         }
+
+        val webtoonList = folder.getWebtoons()
+        val webtoonIdList = mutableListOf<Int>()
+
+        for(webtoon in webtoonList){
+            webtoonIdList.add(webtoon.getId())
+        }
+        val viewModel = LibraryViewModel()
+        viewModel.setIdList(webtoonIdList)
+        viewModel.getWebtoonsList(object : ViewModelCallback<List<Webtoon>> {
+            // On successful fetch, update the RecyclerView with the fetched data.
+            override fun onSuccess(result: List<Webtoon>) {
+                setRecyclerViewContent(WebtoonsListAdapter(result, this@WebtoonFolderDetailsFragment, R.layout.item_library_webtoon_list))
+
+            }
+
+            // On error, log the error and show a toast message.
+            override fun onError(e: Throwable) {
+                Log.d("Error", e.toString())
+                Toast.makeText(context, getString(R.string.display_error), Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun getAllWebtoonInfo(callback: (List<Webtoon>) -> Unit){
+    }
+
+    override fun onItemClick(position: Int, item: Any?) {
+        val mainActivity = (activity as? BaseActivity)
+        val webtoon = item as Webtoon
+
+        mainActivity?.changeTitle(webtoon.getTitle())
+        mainActivity?.changeFragment(WebtoonDetailsFragment(webtoon))
+        Log.d("Thumbnail", webtoon.getThumbnail())
+    }
+
+    override fun onItemDraw(holder: WebtoonsRecyclerViewHolder, position: Int, item: Any?) {
+        val webtoon = item as Webtoon
+        holder.view.findViewById<TextView>(R.id.itemLibrary_title).text = webtoon.getTitle()
+        holder.view.findViewById<TextView>(R.id.itemLibrary_synopsis)?.text = webtoon.getSynopsis()
+        val imageLoader = ImageLoader("https://webtoon-phinf.pstatic.net", requireContext())
+        imageLoader.load(holder.view.findViewById(R.id.itemLibrary_image), webtoon.getThumbnail())
     }
 }
