@@ -50,6 +50,13 @@ class WebtoonDetailsFragment(private val webtoon: Webtoon) : Fragment() {
         // Show the details of the Webtoon
         this.showWebtoonDetails(view)
 
+        // On veut voir si elle existe dans la bdd
+        checkInDb { isFound ->
+            if (!isFound){
+                createNewWebtoonEntry()
+            }
+        }
+
         // Set the onClickListener for the "Previous Page" button
         view.findViewById<TextView>(R.id.fragmentWebtoonDetails_previousPageButton).setOnClickListener {
             val baseActivity = (activity as? BaseActivity)
@@ -76,6 +83,45 @@ class WebtoonDetailsFragment(private val webtoon: Webtoon) : Fragment() {
                 recyclerView.adapter = adapter
             }
         }
+    }
+
+    private fun createNewWebtoonEntry() {
+        val db = FirebaseFirestore.getInstance()
+
+        val newWebtoon = hashMapOf(
+            "comments" to arrayListOf<Map<String,Any>>(),
+            "id" to webtoon.getId()
+        )
+
+        db.collection("Webtoon")
+            .add(newWebtoon)
+            .addOnSuccessListener { documentReference ->
+                firebaseDocumentUID = documentReference.id
+                Log.d("WebtoonDetails", "Nouvelle entrée dans la bdd")
+            }
+            .addOnFailureListener{ e ->
+                Log.d("WebtoonDetails", "Echec d'entrée dans la bdd")
+            }
+    }
+
+    private fun checkInDb(callback: (Boolean) -> Unit) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection("Webtoon")
+            .get()
+            .addOnSuccessListener { result ->
+                var found = false
+                for(document in result) {
+                    if(document.data.get("id").toString() == webtoon.getId().toString()){
+                        found = true
+                        break;
+                    }
+                }
+                callback(found)
+            }
+            .addOnFailureListener { exception ->
+                Log.w("WEBTOONCOMMENT", "Error getting documents.", exception)
+                callback(false)
+            }
     }
 
     private fun getComments(callback: (List<Comment>) -> Unit) {
