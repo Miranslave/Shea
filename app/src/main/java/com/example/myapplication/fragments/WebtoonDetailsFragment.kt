@@ -198,8 +198,8 @@ class WebtoonDetailsFragment(private val webtoon: Webtoon) : Fragment() {
         firestore.getUserWebtoonFolders(uid, object : FirestoreCallback<List<WebtoonFolder>> {
             override fun onSuccess(result: List<WebtoonFolder>) {
                 val folderTitles = result.map { it.getTitle() }.toTypedArray()
-                val folderIds = result.map { it.getdbid() }
-                val initialFavorites = result.filter { folder -> folder.getWebtoons().any { it.getId() == webtoon.getId() } }.map { it.getdbid() }.toMutableList()
+                val folderIds = result.map { it.getDatabaseId() }
+                val initialFavorites = result.filter { folder -> folder.getWebtoons().any { it.getId() == webtoon.getId() } }.map { it.getDatabaseId() }.toMutableList()
 
                 val checkedItems = BooleanArray(result.size) { folderIds[it] in initialFavorites }
 

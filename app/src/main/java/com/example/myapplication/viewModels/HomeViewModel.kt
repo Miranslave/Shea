@@ -16,7 +16,7 @@ class HomeViewModel : CustomViewModel() {
     private var webtoonCallbackList: List<ViewModelCallback<List<WebtoonFolder>>> = emptyList()
     private var webtoonFoldersList: List<WebtoonFolder> = emptyList()
     private val db: FirebaseFirestore = Firebase.firestore
-    private val user = FirebaseAuth.getInstance().currentUser
+    val connectedUserId = FirebaseAuth.getInstance().currentUser?.uid.toString()
 
     // Function to search for a Webtoon in the list
     fun searchForWebtoonFolder(webtoonTitle: String, callback: ViewModelCallback<List<WebtoonFolder>>) {
@@ -27,12 +27,12 @@ class HomeViewModel : CustomViewModel() {
         }
     }
 
-    fun getWebtoonFoldersList(uid: String, callback: ViewModelCallback<List<WebtoonFolder>>) {
-        Firestore().getUserWebtoonFolders(uid, object : FirestoreCallback<List<WebtoonFolder>> {
+    fun getWebtoonFoldersList(callback: ViewModelCallback<List<WebtoonFolder>>) {
+        Firestore().getUserWebtoonFolders(connectedUserId, object : FirestoreCallback<List<WebtoonFolder>> {
             override fun onSuccess(result: List<WebtoonFolder>) {
                 webtoonFoldersList = result
 
-                Firestore().getUserFavoriteWebtoonsFolder(uid, object : FirestoreCallback<WebtoonFolder> {
+                Firestore().getUserFavoriteWebtoonsFolder(connectedUserId, object : FirestoreCallback<WebtoonFolder> {
                     override fun onSuccess(result: WebtoonFolder) {
                         webtoonFoldersList += result
 
@@ -59,8 +59,8 @@ class HomeViewModel : CustomViewModel() {
         })
     }
 
-    fun addFolderToDatabase(uid: String, title: String) {
-        val webtoonFolder = hashMapOf("uid" to uid, "title" to title, "description" to "", "webtoonsid" to arrayListOf<Int>())
+    fun addFolderToDatabase(title: String) {
+        val webtoonFolder = hashMapOf("uid" to connectedUserId, "title" to title, "description" to "", "webtoonsid" to arrayListOf<Int>())
 
         db.collection("WebtoonFolder").document().set(webtoonFolder).addOnSuccessListener {
             Log.d(ContentValues.TAG, "DocumentSnapshot successfully written!")
@@ -69,9 +69,11 @@ class HomeViewModel : CustomViewModel() {
         }
     }
 
-    fun deleteFolderFromDatabase(databaseIdsList: List<String>) {
-        for (id in databaseIdsList) {
-            db.collection("WebtoonFolder").document(id).delete()
-        }
+    fun deleteFolderFromDatabase(databaseIdsList: List<WebtoonFolder>) {
+        databaseIdsList.filter {
+                it.canBeDeleted()
+            }.forEach {
+                db.collection("WebtoonFolder").document(it.getDatabaseId()).delete()
+            }
     }
 }

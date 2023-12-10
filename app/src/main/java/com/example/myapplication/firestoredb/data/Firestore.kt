@@ -51,7 +51,7 @@ class Firestore {
             } else {
                 // Favorite folder found
                 val document = result.documents[0]
-                val folder = WebtoonFolder("Favorites", "Les webtoons que vous avez ajouté en favoris", document.id)
+                val folder = WebtoonFolder("Favorites", "Les webtoons que vous avez ajouté en favoris", document.id, false)
                 val webtoonsIdList = document.data?.get("webtoonsid") as? ArrayList<Long>
 
                 // Put the webtoons id in the folder

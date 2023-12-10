@@ -1,7 +1,6 @@
 package com.example.myapplication.fragments
 
 import android.app.AlertDialog
-import android.content.ContentValues.TAG
 import android.os.Bundle
 import android.text.InputType
 import android.util.Log
@@ -14,26 +13,21 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.myapplication.R
-import com.example.myapplication.models.WebtoonFolder
 import com.example.myapplication.activities.BaseActivity
 import com.example.myapplication.adapters.RecyclerViewEventsManager
 import com.example.myapplication.adapters.WebtoonsFoldersListAdapter
 import com.example.myapplication.adapters.WebtoonsListAdapter
 import com.example.myapplication.adapters.WebtoonsRecyclerViewHolder
-import com.example.myapplication.models.Webtoon
+import com.example.myapplication.models.WebtoonFolder
 import com.example.myapplication.viewModels.HomeViewModel
 import com.example.myapplication.viewModels.ViewModelCallback
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 
 
 class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
     // Folders deletion mode attributes
     private var deleteFolderMode: Boolean = false
-    private var deleteFolderList: MutableList<String> = mutableListOf()
+    private var deleteFolderList: MutableList<WebtoonFolder> = mutableListOf()
 
     // Other attributes
     private val viewModel: HomeViewModel = HomeViewModel()
@@ -59,13 +53,12 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
+
         val floatingCreationButton: FloatingActionButton = view.findViewById(R.id.fragmentHome_newFolderButton)
         val searchBar = view.findViewById<SearchView>(R.id.fragmentHome_searchBar)
         this.floatingDeleteButton = view.findViewById(R.id.fragmentHome_deleteFolderButton)
 
-        Log.d("Connected user id", uid)
-        showDatabaseFolders(uid)
+        showDatabaseFolders()
 
         // Folder creation popup
         floatingCreationButton.setOnClickListener(fun(_: View) {
@@ -80,8 +73,8 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
             // Creation button
             builder.setPositiveButton(getString(R.string.create)) { _, _ ->
                 val folderTitle = titleinput.text.toString()
-                this.viewModel.addFolderToDatabase(uid, folderTitle)
-                showDatabaseFolders(uid)
+                this.viewModel.addFolderToDatabase(folderTitle)
+                showDatabaseFolders()
             }
 
             // Cancel button
@@ -104,7 +97,7 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
             // Deletion button
             builder.setPositiveButton(getString(R.string.delete)) { _, _ ->
                 this.viewModel.deleteFolderFromDatabase(this.deleteFolderList)
-                showDatabaseFolders(uid)
+                showDatabaseFolders()
                 switchDeleteMode(false)
             }
 
@@ -123,13 +116,13 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
     }
 
     // Update the RecyclerView with the fetched data
-    private fun showDatabaseFolders(uid: String) {
+    private fun showDatabaseFolders() {
         // Show an empty list first to reset the previous datas
         setRecyclerViewContent(WebtoonsFoldersListAdapter(listOf<WebtoonFolder>(), this, R.layout.item_webtoon_folder))
 
         this.spinner = Spinner(this.requireView().findViewById(R.id.fragmentHome_loading))
 
-        viewModel.getWebtoonFoldersList(uid, object : ViewModelCallback<List<WebtoonFolder>> {
+        viewModel.getWebtoonFoldersList(object : ViewModelCallback<List<WebtoonFolder>> {
             override fun onSuccess(result: List<WebtoonFolder>) {
                 Log.d("Webtoon folders fetch success", result.toString())
                 
@@ -180,9 +173,8 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
 
         // The folder needs to be selected or unselected but not opened
         if (deleteFolderMode) {
-
             // If the folder is already selected, unselect it otherwise select it
-            setDeleteFolderSelection(position, webtoonFolder, !deleteFolderList.contains(webtoonFolder.getdbid()))
+            setDeleteFolderSelection(position, webtoonFolder, webtoonFolder.canBeDeleted() && deleteFolderList.find { it.getDatabaseId() == webtoonFolder.getDatabaseId() } == null)
 
             // Hide the delete button if there is no more folder to delete
             if (deleteFolderList.isEmpty())
@@ -200,10 +192,10 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
 
         holder.itemView.setOnLongClickListener {
             // Select the folder
-            setDeleteFolderSelection(position, webtoonFolder, true)
+            setDeleteFolderSelection(position, webtoonFolder, webtoonFolder.canBeDeleted())
 
             // Start the deletion mode
-            switchDeleteMode(true)
+            switchDeleteMode(deleteFolderList.isNotEmpty())
 
             true
         }
@@ -225,12 +217,12 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
             // Change folder color to light blue and select it
             val holder = getRecyclerView().findViewHolderForAdapterPosition(position) as WebtoonsRecyclerViewHolder
             holder.view.setBackgroundResource(R.drawable.border_radius_blue)
-            deleteFolderList.add(webtoonFolder.getdbid())
+            deleteFolderList.add(webtoonFolder)
         } else {
             // Change folder color to white and unselect it
             val holder = getRecyclerView().findViewHolderForAdapterPosition(position) as WebtoonsRecyclerViewHolder
             holder.view.setBackgroundResource(R.drawable.border_radius_white)
-            deleteFolderList.remove(webtoonFolder.getdbid())
+            deleteFolderList.remove(webtoonFolder)
         }
     }
 }

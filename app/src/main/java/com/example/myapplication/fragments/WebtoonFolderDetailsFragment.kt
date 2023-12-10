@@ -8,10 +8,9 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatImageButton
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.myapplication.activities.BaseActivity
 import com.example.myapplication.R
+import com.example.myapplication.activities.BaseActivity
 import com.example.myapplication.adapters.RecyclerViewEventsManager
 import com.example.myapplication.adapters.WebtoonsListAdapter
 import com.example.myapplication.adapters.WebtoonsRecyclerViewHolder
@@ -20,6 +19,7 @@ import com.example.myapplication.models.Webtoon
 import com.example.myapplication.models.WebtoonFolder
 import com.example.myapplication.viewModels.LibraryViewModel
 import com.example.myapplication.viewModels.ViewModelCallback
+import com.google.android.material.textview.MaterialTextView
 
 class WebtoonFolderDetailsFragment(private val folder: WebtoonFolder) : FragmentRecyclerViewManager(),
     RecyclerViewEventsManager {
@@ -57,6 +57,12 @@ class WebtoonFolderDetailsFragment(private val folder: WebtoonFolder) : Fragment
             title.isEnabled = !title.isEnabled
         }
 
+        // Set the add webtoon button
+        view.findViewById<MaterialTextView>(R.id.fragmentWebtoonFolderDetails_addWebtoonButton).setOnClickListener {
+            (activity as? BaseActivity)?.changeFragment(SearchFragment())
+            (activity as? BaseActivity)?.changeTitle(getString(R.string.search_tab_title))
+        }
+
         val webtoonList = folder.getWebtoons()
         val webtoonIdList = mutableListOf<Int>()
 
@@ -69,7 +75,6 @@ class WebtoonFolderDetailsFragment(private val folder: WebtoonFolder) : Fragment
             // On successful fetch, update the RecyclerView with the fetched data.
             override fun onSuccess(result: List<Webtoon>) {
                 setRecyclerViewContent(WebtoonsListAdapter(result, this@WebtoonFolderDetailsFragment, R.layout.item_library_webtoon_list))
-
             }
 
             // On error, log the error and show a toast message.
@@ -78,9 +83,6 @@ class WebtoonFolderDetailsFragment(private val folder: WebtoonFolder) : Fragment
                 Toast.makeText(context, getString(R.string.display_error), Toast.LENGTH_SHORT).show()
             }
         })
-    }
-
-    private fun getAllWebtoonInfo(callback: (List<Webtoon>) -> Unit){
     }
 
     override fun onItemClick(position: Int, item: Any?) {
