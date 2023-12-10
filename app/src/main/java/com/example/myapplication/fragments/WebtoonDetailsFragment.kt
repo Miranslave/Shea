@@ -75,19 +75,20 @@ class WebtoonDetailsFragment(private val webtoon: Webtoon) : Fragment() {
         view.findViewById<ImageButton>(R.id.fragmentWebtoonDetails_favoriteButton).setOnClickListener { this.favoriteButtonClick(view) }
         recyclerView = view.findViewById(R.id.fragmentWebtoonDetails_commentsList)
 
+
         val layoutManager = LinearLayoutManager(requireContext())
         recyclerView.layoutManager = layoutManager
 
-        getComments() { commentList ->
+        getComments { commentList ->
             val adapter = CommentAdapter(commentList)
             recyclerView.adapter = adapter
         }
 
         view.findViewById<Button>(R.id.fragmentWebtoonDetails_publishCommentButton).setOnClickListener {
-            var commentText = view.findViewById<TextView>(R.id.fragmentWebtoonDetails_publishCommentText)
+            val commentText = view.findViewById<TextView>(R.id.fragmentWebtoonDetails_publishCommentText)
             addNewComment(commentText.text.toString())
             commentText.text = ""
-            getComments() { commentList ->
+            getComments { commentList ->
                 val adapter = CommentAdapter(commentList)
                 recyclerView.adapter = adapter
             }
@@ -97,55 +98,44 @@ class WebtoonDetailsFragment(private val webtoon: Webtoon) : Fragment() {
     private fun createNewWebtoonEntry() {
         val db = FirebaseFirestore.getInstance()
 
-        val newWebtoon = hashMapOf(
+        val newWebtoonComment = hashMapOf(
             "comments" to arrayListOf<Map<String, Any>>(), "id" to webtoon.getId()
         )
 
-        db.collection("Webtoon").add(newWebtoon).addOnSuccessListener { documentReference ->
-                firebaseDocumentUID = documentReference.id
-                Log.d("WebtoonDetails", "Nouvelle entrée dans la bdd")
-            }.addOnFailureListener { e ->
-                Log.d("WebtoonDetails", "Echec d'entrée dans la bdd")
-            }
+        db.collection("Webtoon").add(newWebtoonComment).addOnSuccessListener { documentReference ->
+            firebaseDocumentUID = documentReference.id
+            Log.d("WebtoonDetails", "Nouveau commentaire dans la bdd")
+        }.addOnFailureListener { e ->
+            Log.d("WebtoonDetails", "Echec d'ajout de commentaire dans la bdd")
+        }
     }
 
     private fun checkInDb(callback: (Boolean) -> Unit) {
         val db = FirebaseFirestore.getInstance()
         db.collection("Webtoon").get().addOnSuccessListener { result ->
-                var found = false
-                for (document in result) {
-                    if (document.data.get("id").toString() == webtoon.getId().toString()) {
-                        found = true
-                        break;
-                    }
-                }
-                callback(found)
-            }.addOnFailureListener { exception ->
-                Log.w("WEBTOONCOMMENT", "Error getting documents.", exception)
-                callback(false)
-            }
+            val found = result.any { document -> document.data.get("id").toString() == webtoon.getId().toString() }
+            callback(found)
+        }.addOnFailureListener { exception ->
+            Log.w("WEBTOONCOMMENT", "Error getting documents.", exception)
+            callback(false)
+        }
     }
 
     private fun getComments(callback: (List<Comment>) -> Unit) {
         val db = FirebaseFirestore.getInstance()
-        val commentList = mutableListOf<Comment>()
         db.collection("Webtoon").get().addOnSuccessListener { result ->
-                for (document in result) {
-                    if (document.data.get("id").toString() == webtoon.getId().toString()) {
-                        this.firebaseDocumentUID = document.id
-                        val comments = document.data.get("comments") as ArrayList<*>
-                        for (comment in comments) {
-                            comment as HashMap<String, String>
-                            val newComment = Comment(comment.get("usermail") as String, comment.get("comment") as String, comment.get("time") as Timestamp)
-                            commentList.add(newComment)
-                        }
-                        callback(commentList)
-                        break;
+            val comments = result.filter { document -> document.data.get("id").toString() == webtoon.getId().toString() }.flatMap { document ->
+                    this.firebaseDocumentUID = document.id
+                    val comments = document.data.get("comments") as ArrayList<*>
+                    comments.map { comment ->
+                        comment as HashMap<String, String>
+                        Comment(comment.get("usermail") as String, comment.get("comment") as String, comment.get("time") as Timestamp)
                     }
                 }
-            }.addOnFailureListener { exception ->
-                Log.w("WEBTOONCOMMENT", "Error getting documents.", exception)
-            }
+            callback(comments)
+        }.addOnFailureListener { exception ->
+            Log.w("WEBTOONCOMMENT", "Error getting documents.", exception)
+        }
     }
 
     // Show the details of the Webtoon
@@ -181,11 +171,10 @@ class WebtoonDetailsFragment(private val webtoon: Webtoon) : Fragment() {
     }
 
     private fun backButtonClick() {
+        val baseActivity = (activity as? BaseActivity)
+        baseActivity?.changeTitle(getString(R.string.library_tab_title))
         activity?.onBackPressed()
-
-//        val baseActivity = (activity as? BaseActivity)
 //        baseActivity?.changeFragment(LibraryFragment())
-//        baseActivity?.changeTitle(getString(R.string.library_tab_title))
     }
 
     private fun favoriteButtonClick(view: View) {
@@ -274,9 +263,9 @@ class WebtoonDetailsFragment(private val webtoon: Webtoon) : Fragment() {
         val docRef = db.collection("Webtoon").document(firebaseDocumentUID)
 
         docRef.update("comments", FieldValue.arrayUnion(newComment)).addOnSuccessListener { documentReference ->
-                Log.w("WEBTOONCOMMENT", "SUCCESS ADDING COMMENT")
-            }.addOnFailureListener {
-                Log.w("WEBTOONCOMMENT", "FAIL ERROR COMMENT", it)
-            }
+            Log.w("WEBTOONCOMMENT", "SUCCESS ADDING COMMENT")
+        }.addOnFailureListener {
+            Log.w("WEBTOONCOMMENT", "FAIL ERROR COMMENT", it)
+        }
     }
 }
