@@ -4,22 +4,18 @@ import android.view.View
 import android.view.animation.Animation
 import android.view.animation.RotateAnimation
 import android.widget.ImageView
-import androidx.fragment.app.Fragment
-import com.example.myapplication.R
 
-class Spinner(fragment: Fragment, autoStart: Boolean = true) {
-    private var fragment: Fragment
+class Spinner(loadingElem: ImageView, autoStart: Boolean = true) {
+    private var loadingElement: ImageView
     private var started = false
 
     init {
-        this.fragment = fragment
-        if (autoStart)
-            this.start()
+        this.loadingElement = loadingElem
+        if (autoStart) this.start()
     }
 
     fun start() {
-        if (this.started)
-            return
+        if (this.started) return
 
         this.started = true
         val rotate = RotateAnimation(
@@ -29,13 +25,13 @@ class Spinner(fragment: Fragment, autoStart: Boolean = true) {
             repeatCount = Animation.INFINITE
         }
 
-        this.fragment.requireView().findViewById<ImageView>(R.id.loading).startAnimation(rotate)
+        this.loadingElement.startAnimation(rotate)
     }
 
     fun stop() {
         try {
-            this.fragment.requireView().findViewById<ImageView>(R.id.loading).clearAnimation()
-            this.fragment.requireView().findViewById<ImageView>(R.id.loading).visibility = View.GONE
+            this.loadingElement.clearAnimation()
+            this.loadingElement.visibility = View.GONE
         } catch (_: Exception) {
 
         }

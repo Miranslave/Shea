@@ -140,7 +140,7 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
         // Show an empty list first to reset the previous datas
         setRecyclerViewContent(WebtoonsFoldersListAdapter(listOf<WebtoonFolder>(), this, R.layout.item_webtoon_folder))
 
-        this.spinner = Spinner(this)
+        this.spinner = Spinner(this.requireView().findViewById(R.id.fragmentHome_loading))
 
         viewModel.getWebtoonFoldersList(uid, object : ViewModelCallback<List<WebtoonFolder>> {
             override fun onSuccess(result: List<WebtoonFolder>) {

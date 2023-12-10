@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.SearchView
 import android.widget.TextView
 import android.widget.Toast
@@ -44,7 +45,7 @@ class LibraryFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager
         super.onViewCreated(view, savedInstanceState)
 
         // Animate the spinner
-        spinner = Spinner(this)
+        spinner = Spinner(this.requireView().findViewById(R.id.fragmentLibrary_loading))
 
         // Fetch the list of webtoons from the ViewModel
         this.viewModel.getWebtoonsList(object : ViewModelCallback<List<Webtoon>> {
@@ -112,7 +113,6 @@ class LibraryFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager
 
         mainActivity?.changeTitle(webtoon.getTitle())
         mainActivity?.changeFragment(WebtoonDetailsFragment(webtoon))
-        Log.d("Thumbnail", webtoon.getThumbnail())
     }
 
     // This method is called when an item in the RecyclerView is drawn. It sets the title and synopsis of the webtoon on the corresponding TextViews in the item view.

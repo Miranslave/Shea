@@ -1,7 +1,6 @@
 package com.example.myapplication.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +10,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myapplication.image.ImageLoader
 import com.example.myapplication.R
+import com.example.myapplication.activities.BaseActivity
 import com.example.myapplication.models.Webtoon
 import com.example.myapplication.adapters.RecyclerViewEventsManager
 import com.example.myapplication.adapters.WebtoonsListAdapter
@@ -37,7 +37,7 @@ class SearchFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager 
         this.initRecyclerViewDisplay(view, R.id.fragmentSearch_itemsList, WebtoonsListAdapter(listOf<Webtoon>(), this, R.layout.item_library_webtoon_list), LinearLayoutManager(context))
 
         // Start the loading animation
-        this.spinner = Spinner(this, false)
+        this.spinner = Spinner(this.requireView().findViewById(R.id.fragmentSearch_loading), false)
 
         // Get the SearchView and bind a listener to it
         val searchView = view.findViewById<SearchView>(R.id.fragmentSearch_searchView)
@@ -88,7 +88,11 @@ class SearchFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager 
     }
 
     override fun onItemClick(position: Int, item: Any?) {
-        Log.d("Click", "Click on item $position")
+        val mainActivity = (activity as? BaseActivity)
+        val webtoon = item as Webtoon
+
+        mainActivity?.changeTitle(webtoon.getTitle())
+        mainActivity?.changeFragment(WebtoonDetailsFragment(webtoon))
     }
 
     override fun onItemDraw(holder: WebtoonsRecyclerViewHolder, position: Int, item: Any?) {
