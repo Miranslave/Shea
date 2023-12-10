@@ -1,7 +1,6 @@
 package com.example.myapplication.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +9,7 @@ import androidx.appcompat.widget.AppCompatImageButton
 import androidx.fragment.app.Fragment
 import com.example.myapplication.activities.BaseActivity
 import com.example.myapplication.R
-import com.example.myapplication.WebtoonFolder
+import com.example.myapplication.models.WebtoonFolder
 
 class WebtoonFolderDetailsFragment(private val folder: WebtoonFolder) : Fragment() {
 

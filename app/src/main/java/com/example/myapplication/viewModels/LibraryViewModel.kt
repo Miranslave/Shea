@@ -2,20 +2,22 @@ package com.example.myapplication.viewModels
 
 // Import necessary Android and project-specific classes
 import android.util.Log
-import com.example.myapplication.Webtoon
+import com.example.myapplication.models.Webtoon
+import com.example.myapplication.network.WebtoonApiController
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 // Define a ViewModel for the Library
-class LibraryViewModel : WebtoonViewModel() {
+class LibraryViewModel : CustomViewModel() {
     private val db = Firebase.firestore
+    private val webtoonApiController = WebtoonApiController.getInstance()
 
     // Define a list of Webtoon IDs
     private var webtoonsIdsList: List<Int> = listOf(75, 418, 676, 5727, 4940, 3485, 2467)
 
     // Function to get a list of Webtoons
     fun getWebtoonsList(callback: ViewModelCallback<List<Webtoon>>) {
-        this.getRetrofitWebtoonsList(object : ViewModelCallback<List<Webtoon>> {
+        this.webtoonApiController.getRetrofitWebtoonsList(object : ViewModelCallback<List<Webtoon>> {
             // On successful fetch, update the RecyclerView with the fetched data.
             override fun onSuccess(result: List<Webtoon>) {
                 Log.d("Success", result.toString())

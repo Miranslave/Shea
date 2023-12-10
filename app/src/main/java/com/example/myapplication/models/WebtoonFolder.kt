@@ -1,4 +1,4 @@
-package com.example.myapplication
+package com.example.myapplication.models
 
 class WebtoonFolder {
     private val title: String

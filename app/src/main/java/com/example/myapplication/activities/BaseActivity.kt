@@ -9,7 +9,6 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.myapplication.R
-import com.example.myapplication.firestoredb.data.Firestore
 import com.example.myapplication.fragments.HomeFragment
 import com.example.myapplication.fragments.LibraryFragment
 import com.example.myapplication.fragments.SearchFragment
@@ -20,8 +19,7 @@ import com.google.firebase.auth.FirebaseAuth
 
 class BaseActivity : AppCompatActivity() {
     private lateinit var tabs: Map<Int, Map<String, Any>>
-    val viewModel: UserViewModel by viewModels()
-    val firestore: Firestore = Firestore()
+    private val userViewModel: UserViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,7 +27,7 @@ class BaseActivity : AppCompatActivity() {
         val user = FirebaseAuth.getInstance().currentUser
 
         // shared pref
-        val sharedPref = this?.getPreferences(Context.MODE_PRIVATE) ?: return
+        val sharedPref = this.getPreferences(Context.MODE_PRIVATE) ?: return
         with(sharedPref.edit()) {
             putString("uid", user?.uid.toString())
             putString("user_email", user?.email.toString())
@@ -37,17 +35,15 @@ class BaseActivity : AppCompatActivity() {
             apply()
         }
 
-
-        viewModel.user_id = user?.uid.toString()
-        viewModel.email = user?.email.toString()
-        Log.d("USER-DATA", viewModel.email + viewModel.user_id)
-
+        this.userViewModel.user_id = user?.uid.toString()
+        this.userViewModel.email = user?.email.toString()
+        Log.d("USER-DATA", this.userViewModel.email + this.userViewModel.user_id)
     }
 
     override fun onStart() {
         super.onStart()
 
-        tabs = mapOf(
+        this.tabs = mapOf(
             R.id.activityBase_homeTab to mapOf(
                 "fragment" to HomeFragment(), "title" to getString(R.string.home_tab_title)
             ), R.id.activityBase_searchTab to mapOf(
@@ -59,19 +55,19 @@ class BaseActivity : AppCompatActivity() {
             )
         )
 
-        tabs.keys.forEach { id ->
+        this.tabs.keys.forEach { id ->
             findViewById<View>(id).setOnClickListener { changeToTab(id) }
         }
     }
 
     private fun changeToTab(id: Int) {
-        val tab = tabs[id]
+        val tab = this.tabs[id]
         changeTitle(tab?.get("title") as String)
         changeFragment(tab["fragment"] as Fragment)
     }
 
     fun changeFragment(fragment: Fragment) {
-        val transaction = supportFragmentManager.beginTransaction()
+        val transaction = this.supportFragmentManager.beginTransaction()
         transaction.replace(R.id.activityBase_fragmentsContainer, fragment)
         transaction.addToBackStack(null)
         transaction.commit()

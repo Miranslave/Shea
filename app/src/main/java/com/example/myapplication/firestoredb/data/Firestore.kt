@@ -2,8 +2,7 @@ package com.example.myapplication.firestoredb.data
 
 import android.annotation.SuppressLint
 import android.util.Log
-import com.example.myapplication.Webtoon
-import com.example.myapplication.WebtoonFolder
+import com.example.myapplication.models.WebtoonFolder
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 

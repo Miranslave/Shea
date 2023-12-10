@@ -1,4 +1,4 @@
-package com.example.myapplication
+package com.example.myapplication.models
 
 // Class representing a Webtoon
 class Webtoon {

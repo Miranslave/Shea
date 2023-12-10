@@ -2,7 +2,6 @@ package com.example.myapplication.fragments
 
 import android.app.AlertDialog
 import android.content.ContentValues.TAG
-import android.content.Context
 import android.os.Bundle
 import android.text.InputType
 import android.util.Log
@@ -14,7 +13,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.myapplication.R
-import com.example.myapplication.WebtoonFolder
+import com.example.myapplication.models.WebtoonFolder
 import com.example.myapplication.activities.BaseActivity
 import com.example.myapplication.adapters.RecyclerViewEventsManager
 import com.example.myapplication.adapters.WebtoonsFoldersListAdapter
@@ -93,18 +92,27 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
 
         // Folder deletion popup
         this.floatingDeleteButton.setOnClickListener(fun(_: View) {
-            deleteFolderFromDatabase(this.deleteFolderList)
-            showDatabaseFolders(uid)
-            switchDeleteMode(false)
-        })
-    }
+            // Ask for deletion
+            val builder = AlertDialog.Builder(this.context)
+            builder.setTitle(getString(R.string.delete_folder))
+            builder.setMessage(getString(R.string.delete_folder_confirmation))
 
-    private fun removeElementFromArray(array: Array<String>, toRemove: String): Array<String> {
-        val res = emptyArray<String>()
-        for (str in array) {
-            if (str != toRemove) res.plusElement(str)
-        }
-        return res
+            // Deletion button
+            builder.setPositiveButton(getString(R.string.delete)) { _, _ ->
+                deleteFolderFromDatabase(this.deleteFolderList)
+                showDatabaseFolders(uid)
+                switchDeleteMode(false)
+            }
+
+            // Cancel button
+            builder.setNegativeButton(getString(R.string.abort)) { dialog, _ ->
+                switchDeleteMode(false)
+                dialog.cancel()
+            }
+
+            // Show the AlertDialog
+            builder.show()
+        })
     }
 
     private fun addFolderToDatabase(uid: String, title: String) {
@@ -155,12 +163,11 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
         val mainActivity = (activity as? BaseActivity)
         val webtoonFolder = item as WebtoonFolder
 
-        // The folder needs to be unselected
+        // The folder needs to be selected or unselected but not opened
         if (deleteFolderMode) {
-            // Change folder color to white and unselect it
-            val holder = getRecyclerView().findViewHolderForAdapterPosition(position) as WebtoonsRecyclerViewHolder
-            holder.view.setBackgroundResource(R.color.white)
-            deleteFolderList.remove(webtoonFolder.getdbid())
+
+            // If the folder is already selected, unselect it otherwise select it
+            setDeleteFolderSelection(position, webtoonFolder, !deleteFolderList.contains(webtoonFolder.getdbid()))
 
             // Hide the delete button if there is no more folder to delete
             if (deleteFolderList.isEmpty())
@@ -177,14 +184,11 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
         holder.view.findViewById<TextView>(R.id.itemFolder_title).text = webtoonFolder.getTitle()
 
         holder.itemView.setOnLongClickListener {
-            // Change folder color to light blue
-            holder.view.setBackgroundResource(R.color.main_light_blue)
+            // Select the folder
+            setDeleteFolderSelection(position, webtoonFolder, true)
 
             // Start the deletion mode
             switchDeleteMode(true)
-
-            // Add the folder to the list of folders to delete
-            deleteFolderList.add(webtoonFolder.getdbid())
 
             true
         }
@@ -198,6 +202,20 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
             this.floatingDeleteButton.bringToFront()
         } else {
             this.floatingDeleteButton.visibility = View.GONE
+        }
+    }
+
+    private fun setDeleteFolderSelection(position:Int, webtoonFolder: WebtoonFolder, select: Boolean) {
+        if (select) {
+            // Change folder color to light blue and select it
+            val holder = getRecyclerView().findViewHolderForAdapterPosition(position) as WebtoonsRecyclerViewHolder
+            holder.view.setBackgroundResource(R.drawable.border_radius_blue)
+            deleteFolderList.add(webtoonFolder.getdbid())
+        } else {
+            // Change folder color to white and unselect it
+            val holder = getRecyclerView().findViewHolderForAdapterPosition(position) as WebtoonsRecyclerViewHolder
+            holder.view.setBackgroundResource(R.drawable.border_radius_white)
+            deleteFolderList.remove(webtoonFolder.getdbid())
         }
     }
 }

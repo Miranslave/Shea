@@ -13,7 +13,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/border_radius"
+            android:background="@drawable/border_radius_white"
             android:orientation="horizontal">
 
             <SearchView
@@ -24,13 +24,6 @@
 
             </SearchView>
         </LinearLayout>
-
-        <TextView
-            android:id="@+id/fragmentSearch_resultsCountText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginVertical="5dp"
-            android:text="X résultats" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/fragmentSearch_itemsList"

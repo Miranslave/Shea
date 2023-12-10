@@ -27,4 +27,7 @@
     <string name="create">Créer</string>
     <string name="create_folder">Créer un nouveau dossier ?</string>
     <string name="no_folder">Utilisez le bouton (+) pour créer votre premier dossier</string>
+    <string name="delete_folder">Supression de dossiers</string>
+    <string name="delete_folder_confirmation">Voulez-vous vraiment supprimer ces dossiers ?</string>
+    <string name="delete">Supprimer</string>
 </resources>

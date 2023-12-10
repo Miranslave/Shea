@@ -1,14 +1,15 @@
-package com.example.myapplication.viewModels
+package com.example.myapplication.network
 
-import com.example.myapplication.Webtoon
 import com.example.myapplication.enums.Langage
-import com.example.myapplication.network.WebtoonOriginalsApi
+import com.example.myapplication.models.Webtoon
 import com.example.myapplication.network.originals.titleList.OriginalRequestTitleList
 import com.example.myapplication.network.originals.titleList.OriginalTitleList
+import com.example.myapplication.viewModels.CustomViewModel
+import com.example.myapplication.viewModels.ViewModelCallback
 
-open class WebtoonViewModel : CustomViewModel() {
+class WebtoonApiController private constructor() : CustomViewModel() {
 
-    var webtoonsList: List<Webtoon> = ArrayList()
+    private var webtoonsList: List<Webtoon> = ArrayList()
     private var isRequestInProgress = false
     private var waitingCallbacks: List<ViewModelCallback<List<Webtoon>>> = ArrayList()
 
@@ -59,5 +60,27 @@ open class WebtoonViewModel : CustomViewModel() {
                 isRequestInProgress = false
             }
         })
+    }
+
+    fun getWebtoonsList(): List<Webtoon> {
+        return webtoonsList
+    }
+
+    companion object {
+        @Volatile
+        private var INSTANCE: WebtoonApiController? = null
+
+        fun getInstance(): WebtoonApiController {
+            synchronized(this) {
+                var instance = INSTANCE
+
+                if (instance == null) {
+                    instance = WebtoonApiController()
+                    INSTANCE = instance
+                }
+
+                return instance
+            }
+        }
     }
 }

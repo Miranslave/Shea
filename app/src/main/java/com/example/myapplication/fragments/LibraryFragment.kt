@@ -5,13 +5,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.myapplication.Image.ImageLoader
+import com.example.myapplication.image.ImageLoader
 import com.example.myapplication.R
-import com.example.myapplication.Webtoon
+import com.example.myapplication.models.Webtoon
 import com.example.myapplication.activities.BaseActivity
 import com.example.myapplication.adapters.RecyclerViewEventsManager
 import com.example.myapplication.adapters.WebtoonsListAdapter

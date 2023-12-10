@@ -14,10 +14,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import com.example.myapplication.Image.ImageLoader
+import com.example.myapplication.image.ImageLoader
 import com.example.myapplication.R
-import com.example.myapplication.Webtoon
-import com.example.myapplication.WebtoonFolder
+import com.example.myapplication.models.Webtoon
+import com.example.myapplication.models.WebtoonFolder
 import com.example.myapplication.activities.BaseActivity
 import com.example.myapplication.firestoredb.data.Firestore
 import com.example.myapplication.firestoredb.data.FirestoreCallback

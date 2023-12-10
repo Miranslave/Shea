@@ -2,20 +2,12 @@ package com.example.myapplication.viewModels
 
 // Import necessary Android and project-specific classes
 import android.util.Log
-import android.widget.Toast
-import com.example.myapplication.R
-import com.example.myapplication.Webtoon
-import com.example.myapplication.adapters.WebtoonsListAdapter
-import com.example.myapplication.enums.Langage
-import com.example.myapplication.network.WebtoonOriginalsApi
-import com.example.myapplication.network.originals.titleList.OriginalRequestTitleList
-import com.example.myapplication.network.originals.titleList.OriginalTitle
-import com.example.myapplication.network.originals.titleList.OriginalTitleList
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import com.example.myapplication.models.Webtoon
+import com.example.myapplication.network.WebtoonApiController
 
 // Define a ViewModel for the Library
-class SearchViewModel : WebtoonViewModel() {
+class SearchViewModel : CustomViewModel() {
+    private val webtoonApiController = WebtoonApiController.getInstance()
     private var lastTitleSearchString: String = ""
     private var lastTitleSearchCallback: ViewModelCallback<List<Webtoon>>? = null
 
@@ -23,17 +15,22 @@ class SearchViewModel : WebtoonViewModel() {
         this.queryApiWebtoonsList()
     }
 
-    // Function to get a list of Webtoons
+    // Function to search for a Webtoon in the list
     fun searchForWebtoon(webtoonTitle: String, callback: ViewModelCallback<List<Webtoon>>) {
         this.lastTitleSearchCallback = callback
         this.lastTitleSearchString = webtoonTitle
 
-        if (this.webtoonsList.isNotEmpty())
+        if (this.webtoonApiController.getWebtoonsList().isNotEmpty())
             this.searchForWebtoonInList()
     }
 
+    // Function to get a list of Webtoons
+    fun getWebtoonList(callback: ViewModelCallback<List<Webtoon>>) {
+        return this.webtoonApiController.getRetrofitWebtoonsList(callback)
+    }
+
     private fun queryApiWebtoonsList() {
-        this.getRetrofitWebtoonsList(object : ViewModelCallback<List<Webtoon>> {
+        this.webtoonApiController.getRetrofitWebtoonsList(object : ViewModelCallback<List<Webtoon>> {
             override fun onSuccess(result: List<Webtoon>) {
                 Log.d("Search list", "List fetched")
                 searchForWebtoonInList()
@@ -52,11 +49,11 @@ class SearchViewModel : WebtoonViewModel() {
             return
 
         if (this.lastTitleSearchString.isEmpty()) {
-            this.lastTitleSearchCallback!!.onSuccess(this.webtoonsList)
+            this.lastTitleSearchCallback!!.onSuccess(this.webtoonApiController.getWebtoonsList())
             return
         }
 
         Log.d("Search", "Title: ${this.lastTitleSearchString}")
-        this.lastTitleSearchCallback!!.onSuccess(this.webtoonsList.filter { it.getTitle().contains(this.lastTitleSearchString, ignoreCase = true) })
+        this.lastTitleSearchCallback!!.onSuccess(this.webtoonApiController.getWebtoonsList().filter { it.getTitle().contains(this.lastTitleSearchString, ignoreCase = true) })
     }
 }
