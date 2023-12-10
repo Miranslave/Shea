@@ -54,23 +54,24 @@ class WebtoonDetailsFragment(private val webtoon: Webtoon) : Fragment() {
             baseActivity?.changeTitle(getString(R.string.library_tab_title))
         }
 
-        val commentsList : List<Comment> = getComments()
-        Log.d("WEBTOONCOMMENT", commentsList.toString())
         recyclerView = view.findViewById(R.id.fragmentWebtoonDetails_commentsList)
 
-        val adapter = CommentAdapter(commentsList)
-        recyclerView.adapter = adapter
+        val layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.layoutManager = layoutManager
+
+        getComments(){ commentList ->
+            val adapter = CommentAdapter(commentList)
+            recyclerView.adapter = adapter
+        }
     }
 
-    private fun getComments(): List<Comment> {
+    private fun getComments(callback: (List<Comment>) -> Unit) {
         val db = FirebaseFirestore.getInstance()
         val commentList = mutableListOf<Comment>()
         db.collection("Webtoon")
             .get()
             .addOnSuccessListener { result ->
                 for(document in result) {
-                    Log.d("WEBTOONCOMMENT", document.data.get("id").toString())
-                    Log.d("WEBTOONCOMMENT",  webtoon.getId().toString())
                     if(document.data.get("id").toString() == webtoon.getId().toString()){
                         val comments = document.data.get("comments") as ArrayList<*>
                         for(comment in comments ){
@@ -78,15 +79,14 @@ class WebtoonDetailsFragment(private val webtoon: Webtoon) : Fragment() {
                             val newComment = Comment(comment.get("userid") as String, comment.get("comment") as String)
                             commentList.add(newComment)
                         }
+                        callback(commentList)
+                        break;
                     }
                 }
             }
             .addOnFailureListener { exception ->
                 Log.w("WEBTOONCOMMENT", "Error getting documents.", exception)
             }
-
-        Log.d("WEBTOONCOMMENT", commentList.toString())
-        return commentList
     }
 
 
