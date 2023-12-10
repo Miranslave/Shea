@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
@@ -25,6 +26,7 @@ import com.example.myapplication.adapters.CommentAdapter
 import com.example.myapplication.firestoredb.data.Comment
 import com.example.myapplication.firestoredb.data.Firestore
 import com.example.myapplication.firestoredb.data.FirestoreCallback
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -35,6 +37,7 @@ class WebtoonDetailsFragment(private val webtoon: Webtoon) : Fragment() {
     // Inflate the layout for this fragment
     private lateinit var imageLoader: ImageLoader
     lateinit var recyclerView: RecyclerView
+    lateinit var firebaseDocumentUID : String
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         imageLoader= ImageLoader("https://webtoon-phinf.pstatic.net", requireContext())
         return inflater.inflate(R.layout.fragment_webtoon_details, container, false)
@@ -63,6 +66,16 @@ class WebtoonDetailsFragment(private val webtoon: Webtoon) : Fragment() {
             val adapter = CommentAdapter(commentList)
             recyclerView.adapter = adapter
         }
+
+        view.findViewById<Button>(R.id.fragmentWebtoonDetails_publishCommentButton).setOnClickListener{
+            var commentText = view.findViewById<TextView>(R.id.fragmentWebtoonDetails_publishCommentText)
+            addNewComment(commentText.text.toString())
+            commentText.text = ""
+            getComments(){ commentList ->
+                val adapter = CommentAdapter(commentList)
+                recyclerView.adapter = adapter
+            }
+        }
     }
 
     private fun getComments(callback: (List<Comment>) -> Unit) {
@@ -73,10 +86,11 @@ class WebtoonDetailsFragment(private val webtoon: Webtoon) : Fragment() {
             .addOnSuccessListener { result ->
                 for(document in result) {
                     if(document.data.get("id").toString() == webtoon.getId().toString()){
+                        this.firebaseDocumentUID = document.id
                         val comments = document.data.get("comments") as ArrayList<*>
                         for(comment in comments ){
                             comment as HashMap<String,String>
-                            val newComment = Comment(comment.get("userid") as String, comment.get("comment") as String)
+                            val newComment = Comment(comment.get("usermail") as String, comment.get("comment") as String, comment.get("time") as Timestamp)
                             commentList.add(newComment)
                         }
                         callback(commentList)
@@ -223,19 +237,23 @@ class WebtoonDetailsFragment(private val webtoon: Webtoon) : Fragment() {
 
     private fun addNewComment(comment : String){
         val db = FirebaseFirestore.getInstance()
+        val user = FirebaseAuth.getInstance().currentUser
+        val currentTimeStamp = com.google.firebase.Timestamp.now()
+
         val newComment = hashMapOf(
             "comment" to comment,
-            "userid" to FirebaseAuth.getInstance().currentUser
+            "usermail" to user?.email as String,
+            "time" to currentTimeStamp
         )
 
-        db.collection("Webtoon").document("5727").collection("comments")
-            .add(newComment)
+        val docRef = db.collection("Webtoon").document(firebaseDocumentUID)
+
+        docRef.update("comments" , FieldValue.arrayUnion(newComment))
             .addOnSuccessListener { documentReference ->
                 Log.w("WEBTOONCOMMENT", "SUCCESS ADDING COMMENT")
             }
             .addOnFailureListener{
-                Log.w("Failed", "Error adding comment", it)
+                Log.w("WEBTOONCOMMENT", "FAIL ERROR COMMENT", it)
             }
-
     }
 }
