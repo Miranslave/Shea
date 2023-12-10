@@ -32,4 +32,5 @@
     <string name="delete">Supprimer</string>
     <string name="add">Ajouter</string>
     <string name="add_to_folder">Ajouter à un dossier</string>
+    <string name="save">Sauvegarder</string>
 </resources>

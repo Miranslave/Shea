@@ -27,9 +27,12 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 // Define a Fragment to show the details of a Webtoon
 class WebtoonDetailsFragment(private val webtoon: Webtoon) : Fragment() {
+    private lateinit var imageLoader: ImageLoader
+    private val uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
+    private val firestore = Firestore()
+
 
     // Inflate the layout for this fragment
-    private lateinit var imageLoader: ImageLoader
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         imageLoader = ImageLoader("https://webtoon-phinf.pstatic.net", requireContext())
         return inflater.inflate(R.layout.fragment_webtoon_details, container, false)
@@ -43,11 +46,16 @@ class WebtoonDetailsFragment(private val webtoon: Webtoon) : Fragment() {
         this.showWebtoonDetails(view)
 
         // Set the onClickListener for the "Previous Page" button
-        view.findViewById<TextView>(R.id.fragmentWebtoonDetails_previousPageButton).setOnClickListener {
-            val baseActivity = (activity as? BaseActivity)
-            baseActivity?.changeFragment(LibraryFragment())
-            baseActivity?.changeTitle(getString(R.string.library_tab_title))
-        }
+        view.findViewById<TextView>(R.id.fragmentWebtoonDetails_previousPageButton).setOnClickListener { this.backButtonClick() }
+
+        // Set the onClickListener for the URL button
+        view.findViewById<ImageButton>(R.id.fragmentWebtoonDetails_urlButton).setOnClickListener { this.urlButtonClick() }
+
+        // Set the onClickListener for the bookmark button
+        view.findViewById<ImageButton>(R.id.fragmentWebtoonDetails_saveButton).setOnClickListener { this.bookmarkButtonClick(view) }
+
+        // Set the onClickListener for the favorite button
+        view.findViewById<ImageButton>(R.id.fragmentWebtoonDetails_favoriteButton).setOnClickListener { this.favoriteButtonClick(view) }
     }
 
     // Show the details of the Webtoon
@@ -63,115 +71,104 @@ class WebtoonDetailsFragment(private val webtoon: Webtoon) : Fragment() {
         view.findViewById<TextView>(R.id.fragmentWebtoonDetails_totalEpisodes).text = webtoon.getTotalEpisodeCount().toString()
         val imgview = view.findViewById<ImageView>(R.id.fragmentWebtoonDetails_imageView)
         imageLoader.load(imgview, webtoon.getThumbnail())
-        // Set the onClickListener for the URL button
-        view.findViewById<ImageButton>(R.id.fragmentWebtoonDetails_urlButton).setOnClickListener {
-            val intent = Intent(Intent.ACTION_VIEW)
-            intent.data = Uri.parse(webtoon.getLinkUrl())
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            context?.startActivity(intent)
-        }
 
-        view.findViewById<ImageButton>(R.id.fragmentWebtoonDetails_saveButton).setOnClickListener {
-            val uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
+        // Change the bookmark icon if the Webtoon is already in the user's library
+        firestore.WebtoonFolder(uid, object : FirestoreCallback<List<WebtoonFolder>> {
+            override fun onSuccess(result: List<Any>) {
+                result.forEach { doc ->
+                    doc as WebtoonFolder
 
-            val builder = AlertDialog.Builder(context)
-            builder.setTitle(getString(R.string.add_to_folder))
-
-            val firestore = Firestore()
-
-            firestore.WebtoonFolder(uid, object : FirestoreCallback<List<WebtoonFolder>> {
-                override fun onSuccess(result: List<Any>) {
-                    // Folders info list
-                    val arrayTitle = ArrayList<String>()
-                    val arrayFolderId = ArrayList<String>()
-
-                    // List to know which folders will contains the webtoon
-                    val arrayIdFavoriteStart = ArrayList<String>()
-                    val arrayIdFavoriteEnd = ArrayList<String>()
-
-                    // List displayed at first display
-                    val alreadyChecked = mutableListOf<Boolean>()
-
-                    for (doc in result) {
-                        doc as WebtoonFolder
-                        arrayTitle.add(doc.getTitle())
-                        arrayFolderId.add(doc.getdbid())
-                        var check = false
-
-                        val arrayAlreadyFavorite = doc.getWebtoons()
-
-                        for (web in arrayAlreadyFavorite) {
-                            if (web.getId() == webtoon.getId()) {
-                                arrayIdFavoriteStart.add(doc.getdbid())
-                                check = true
-                                break;
-                            }
-                        }
-
-                        alreadyChecked.add(check)
+                    if (doc.getWebtoons().any { it.getId() == webtoon.getId() }) {
+                        view.findViewById<ImageButton>(R.id.fragmentWebtoonDetails_saveButton).setImageResource(R.drawable.bookmark_slash)
                     }
-
-                    // Perform a copy to compare the two lists later
-                    arrayIdFavoriteEnd.addAll(arrayIdFavoriteStart)
-                    builder.setMultiChoiceItems(arrayTitle.toArray(arrayOf<String>()), alreadyChecked.toBooleanArray()) { dialog, which, isChecked ->
-
-                        if (isChecked) arrayIdFavoriteEnd.add(arrayFolderId[which])
-                        else arrayIdFavoriteEnd.remove(arrayFolderId[which])
-                    }
-
-                    // Ok button
-                    builder.setPositiveButton(getString(R.string.add)) { _, _ ->
-                        if (arrayIdFavoriteStart.sorted() != arrayIdFavoriteEnd.sorted()) changeFavoriteFolders(arrayIdFavoriteStart, arrayIdFavoriteEnd, firestore.db)
-                    }
-
-                    // Cancel button
-                    builder.setNegativeButton(getString(R.string.abort)) { dialog, _ -> dialog.cancel() }
-
-                    // Build and show the window
-                    val dialogWindow = builder.create()
-                    dialogWindow.show()
                 }
+            }
 
-                override fun onError(e: Throwable) {
-                    Toast.makeText(context, getString(R.string.display_error), Toast.LENGTH_SHORT).show()
-                }
-
-            })
-        }
+            override fun onError(e: Throwable) {
+                Toast.makeText(context, getString(R.string.display_error), Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
-    private fun changeFavoriteFolders(
-        arrayIdFavoriteStart: ArrayList<String>, arrayIdFavoriteEnd: ArrayList<String>, db: FirebaseFirestore,
-    ) {
-        //Ajouts dans des folders
-        for (folderId in arrayIdFavoriteEnd) {
-            if (!arrayIdFavoriteStart.contains(folderId)) {
+    private fun backButtonClick() {
+        activity?.onBackPressed()
 
-                val updates = hashMapOf(
-                    "webtoonsid" to FieldValue.arrayUnion(webtoon.getId())
-                )
+//        val baseActivity = (activity as? BaseActivity)
+//        baseActivity?.changeFragment(LibraryFragment())
+//        baseActivity?.changeTitle(getString(R.string.library_tab_title))
+    }
 
-                // Met à jour le champ "webtoonsid" avec le nouvel élément ajouté
-                db.collection("WebtoonFolder").document(folderId).update(updates as Map<String, Any>).addOnSuccessListener { Log.d("WebtoonFavoris", "DocumentSnapshot successfully updated!") }.addOnFailureListener { e -> Log.w("WebtoonFavoris", "Error updating document", e) }
+    private fun favoriteButtonClick(view: View) {
+        // TODO: Add the Webtoon to the user's favorites
+        // Show a toast message
+        Toast.makeText(context, "TODO", Toast.LENGTH_SHORT).show()
+
+        // Change the favorite icon
+        view.findViewById<ImageButton>(R.id.fragmentWebtoonDetails_favoriteButton).setImageResource(R.drawable.star_filled)
+    }
+
+    private fun urlButtonClick() {
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.data = Uri.parse(webtoon.getLinkUrl())
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        context?.startActivity(intent)
+    }
+
+    private fun bookmarkButtonClick(view: View) {
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle(getString(R.string.add_to_folder))
+
+        firestore.WebtoonFolder(uid, object : FirestoreCallback<List<WebtoonFolder>> {
+            override fun onSuccess(result: List<Any>) {
+                val folderInfo = result.map { it as WebtoonFolder }
+                val folderTitles = folderInfo.map { it.getTitle() }.toTypedArray()
+                val folderIds = folderInfo.map { it.getdbid() }
+                val initialFavorites = folderInfo.filter { folder -> folder.getWebtoons().any { it.getId() == webtoon.getId() } }.map { it.getdbid() }.toMutableList()
+
+                val checkedItems = BooleanArray(folderInfo.size) { folderIds[it] in initialFavorites }
+
+                builder.setMultiChoiceItems(folderTitles, checkedItems) { _, which, isChecked ->
+                    if (isChecked) {
+                        initialFavorites.add(folderIds[which])
+                    } else {
+                        initialFavorites.remove(folderIds[which])
+                    }
+                }
+
+                builder.setPositiveButton(getString(R.string.save)) { _, _ ->
+                    val finalFavorites = initialFavorites.sorted()
+                    if (folderIds.sorted() != finalFavorites) {
+                        changeBookmarkFolders(folderIds, finalFavorites, firestore.db)
+                        if (finalFavorites.isNotEmpty()) {
+                            view.findViewById<ImageButton>(R.id.fragmentWebtoonDetails_saveButton).setImageResource(R.drawable.bookmark_slash)
+                        }
+                    }
+                }
+
+                builder.setNegativeButton(getString(R.string.abort)) { dialog, _ -> dialog.cancel() }
+
+                val dialogWindow = builder.create()
+                dialogWindow.show()
             }
+
+            override fun onError(e: Throwable) {
+                Toast.makeText(context, getString(R.string.display_error), Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun changeBookmarkFolders(arrayIdFavoriteStart: List<String>, arrayIdFavoriteEnd: List<String>, db: FirebaseFirestore) {
+        val foldersToAdd = arrayIdFavoriteEnd.subtract(arrayIdFavoriteStart)
+        val foldersToRemove = arrayIdFavoriteStart.subtract(arrayIdFavoriteEnd)
+
+        foldersToAdd.forEach { folderId ->
+            val updates = hashMapOf("webtoonsid" to FieldValue.arrayUnion(webtoon.getId()))
+            db.collection("WebtoonFolder").document(folderId).update(updates as Map<String, Any>).addOnSuccessListener { Log.d("WebtoonFavoris", "DocumentSnapshot successfully updated!") }.addOnFailureListener { e -> Log.w("WebtoonFavoris", "Error updating document", e) }
         }
 
-        FirebaseFirestore.getInstance()
-
-        //Suppression dans des folders
-        for (folderId in arrayIdFavoriteStart) {
-            if (!arrayIdFavoriteEnd.contains(folderId)) {
-                val updates = hashMapOf(
-                    "webtoonsid" to FieldValue.arrayRemove(webtoon.getId())
-                )
-
-                // Met à jour le champ "webtoonsid" en supprimant l'élément spécifié
-                db.collection("WebtoonFolder").document(folderId).update(updates as Map<String, Any>).addOnSuccessListener {
-                        Log.d("WebtoonFavoris", "DocumentSnapshot successfully updated!")
-                    }.addOnFailureListener { e ->
-                        Log.w("WebtoonFavoris", "Error updating document", e)
-                    }
-            }
+        foldersToRemove.forEach { folderId ->
+            val updates = hashMapOf("webtoonsid" to FieldValue.arrayRemove(webtoon.getId()))
+            db.collection("WebtoonFolder").document(folderId).update(updates as Map<String, Any>).addOnSuccessListener { Log.d("WebtoonFavoris", "DocumentSnapshot successfully updated!") }.addOnFailureListener { e -> Log.w("WebtoonFavoris", "Error updating document", e) }
         }
     }
 }
