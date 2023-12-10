@@ -28,4 +28,8 @@ class WebtoonsListAdapter(
 
     // Return the size of the dataset (invoked by the layout manager)
     override fun getItemCount() = webtoonsList.size
+
+    fun getWebtoonsList(): List<*> {
+        return this.webtoonsList
+    }
 }

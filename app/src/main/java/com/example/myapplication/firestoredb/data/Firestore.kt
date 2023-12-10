@@ -31,8 +31,6 @@ class Firestore() {
                     }
                 }
 
-
-                //res = res.toList() as ArrayList<Any>
                 callback.onSuccess(res)
             }
             .addOnFailureListener { exception ->

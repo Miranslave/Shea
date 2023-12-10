@@ -5,8 +5,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myapplication.image.ImageLoader
 import com.example.myapplication.R
@@ -17,7 +19,6 @@ import com.example.myapplication.adapters.WebtoonsListAdapter
 import com.example.myapplication.adapters.WebtoonsRecyclerViewHolder
 import com.example.myapplication.viewModels.LibraryViewModel
 import com.example.myapplication.viewModels.ViewModelCallback
-import com.google.firebase.auth.FirebaseAuth
 
 // This class represents a fragment in the application that displays a list of webtoons in a RecyclerView.
 class LibraryFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
@@ -27,11 +28,10 @@ class LibraryFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager
 
     // This method inflates the layout for this fragment and initializes the RecyclerView with a grid layout to display folders in 2 columns.
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        val user = FirebaseAuth.getInstance().currentUser
         this.imageLoader = ImageLoader("https://webtoon-phinf.pstatic.net", requireContext())
 
         val view = inflater.inflate(R.layout.fragment_library, container, false)
-        this.initRecyclerViewDisplay(view, R.id.fragmentLibrary_itemsList, WebtoonsListAdapter(listOf<Webtoon>(), this, R.layout.item_library_webtoon), LinearLayoutManager(context))
+        this.initRecyclerViewDisplay(view, R.id.fragmentLibrary_itemsList, WebtoonsListAdapter(listOf<Webtoon>(), this, R.layout.item_library_webtoon_list), LinearLayoutManager(context))
         return view
     }
 
@@ -40,14 +40,13 @@ class LibraryFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager
         super.onViewCreated(view, savedInstanceState)
 
         // Animate the spinner
-        val loader: Spinner = Spinner(this)
+        val loader = Spinner(this)
 
         // Fetch the list of webtoons from the ViewModel
         this.viewModel.getWebtoonsList(object : ViewModelCallback<List<Webtoon>> {
             // On successful fetch, update the RecyclerView with the fetched data.
             override fun onSuccess(result: List<Webtoon>) {
-                Log.d("Success", result.toString())
-                setRecyclerViewContent(WebtoonsListAdapter(result, this@LibraryFragment, R.layout.item_library_webtoon))
+                setRecyclerViewContent(WebtoonsListAdapter(result, this@LibraryFragment, R.layout.item_library_webtoon_list))
                 loader.stop()
             }
 
@@ -58,12 +57,25 @@ class LibraryFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager
                 loader.stop()
             }
         })
+
+        // Listener for the display mode button (grid or list)
+        val listDisplayModeButton = view.findViewById<ImageButton>(R.id.fragmentLibrary_listDisplayButton)
+        listDisplayModeButton.setOnClickListener {
+            this.setRecyclerViewContent(WebtoonsListAdapter(this.getRecyclerViewContentList(), this@LibraryFragment, R.layout.item_library_webtoon_list))
+            this.changeRecyclerViewLayout(LinearLayoutManager(context))
+        }
+        val gridDisplayModeButton = view.findViewById<ImageButton>(R.id.fragmentLibrary_gridDisplayButton)
+        gridDisplayModeButton.setOnClickListener {
+            this.setRecyclerViewContent(WebtoonsListAdapter(this.getRecyclerViewContentList(), this@LibraryFragment, R.layout.item_library_webtoon_grid))
+            this.changeRecyclerViewLayout(GridLayoutManager(context, 2))
+        }
     }
 
     // This method is called when an item in the RecyclerView is clicked. It changes the title of the main activity and replaces the current fragment with a `WebtoonDetailsFragment` that shows the details of the clicked webtoon.
     override fun onItemClick(position: Int, item: Any?) {
         val mainActivity = (activity as? BaseActivity)
         val webtoon = item as Webtoon
+
         mainActivity?.changeTitle(webtoon.getTitle())
         mainActivity?.changeFragment(WebtoonDetailsFragment(webtoon))
         Log.d("Thumbnail", webtoon.getThumbnail())
@@ -73,7 +85,7 @@ class LibraryFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager
     override fun onItemDraw(holder: WebtoonsRecyclerViewHolder, position: Int, item: Any?) {
         val webtoon = item as Webtoon
         holder.view.findViewById<TextView>(R.id.itemLibrary_title).text = webtoon.getTitle()
-        holder.view.findViewById<TextView>(R.id.itemLibrary_synopsis).text = webtoon.getSynopsis()
+        holder.view.findViewById<TextView>(R.id.itemLibrary_synopsis)?.text = webtoon.getSynopsis()
         this.imageLoader.load(holder.view.findViewById(R.id.itemLibrary_image), webtoon.getThumbnail())
     }
 }

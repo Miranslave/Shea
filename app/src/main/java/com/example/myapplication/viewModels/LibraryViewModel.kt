@@ -20,7 +20,6 @@ class LibraryViewModel : CustomViewModel() {
         this.webtoonApiController.getRetrofitWebtoonsList(object : ViewModelCallback<List<Webtoon>> {
             // On successful fetch, update the RecyclerView with the fetched data.
             override fun onSuccess(result: List<Webtoon>) {
-                Log.d("Success", result.toString())
                 callback.onSuccess(result.filter { webtoonsIdsList.contains(it.getId()) })
             }
 

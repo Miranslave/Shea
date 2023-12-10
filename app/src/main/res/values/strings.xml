@@ -30,4 +30,6 @@
     <string name="delete_folder">Supression de dossiers</string>
     <string name="delete_folder_confirmation">Voulez-vous vraiment supprimer ces dossiers ?</string>
     <string name="delete">Supprimer</string>
+    <string name="add">Ajouter</string>
+    <string name="add_to_folder">Ajouter à un dossier</string>
 </resources>

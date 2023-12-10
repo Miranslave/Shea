@@ -34,7 +34,7 @@ class SearchFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager 
         this.imageLoader = ImageLoader("https://webtoon-phinf.pstatic.net", requireContext())
 
         // Initialize the RecyclerView
-        this.initRecyclerViewDisplay(view, R.id.fragmentSearch_itemsList, WebtoonsListAdapter(listOf<Webtoon>(), this, R.layout.item_library_webtoon), LinearLayoutManager(context))
+        this.initRecyclerViewDisplay(view, R.id.fragmentSearch_itemsList, WebtoonsListAdapter(listOf<Webtoon>(), this, R.layout.item_library_webtoon_list), LinearLayoutManager(context))
 
         // Start the loading animation
         this.spinner = Spinner(this, false)
@@ -52,7 +52,7 @@ class SearchFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager 
     private fun getWebtoonListCallback(): ViewModelCallback<List<Webtoon>> {
         return object : ViewModelCallback<List<Webtoon>> {
             override fun onSuccess(result: List<Webtoon>) {
-                setRecyclerViewContent(WebtoonsListAdapter(result, this@SearchFragment, R.layout.item_library_webtoon))
+                setRecyclerViewContent(WebtoonsListAdapter(result, this@SearchFragment, R.layout.item_library_webtoon_list))
                 spinner.stop()
             }
 
@@ -73,7 +73,7 @@ class SearchFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager 
                 spinner.start()
                 model.searchForWebtoon(newText.toString(), object : ViewModelCallback<List<Webtoon>> {
                     override fun onSuccess(result: List<Webtoon>) {
-                        setRecyclerViewContent(WebtoonsListAdapter(result, this@SearchFragment, R.layout.item_library_webtoon))
+                        setRecyclerViewContent(WebtoonsListAdapter(result, this@SearchFragment, R.layout.item_library_webtoon_list))
                         spinner.stop()
                     }
 
