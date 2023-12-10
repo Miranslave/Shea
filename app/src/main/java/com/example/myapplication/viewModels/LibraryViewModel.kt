@@ -59,4 +59,8 @@ class LibraryViewModel : CustomViewModel() {
         }
         return res
     }
+
+    fun setIdList(idList : List<Int>){
+        this.webtoonsIdsList = idList
+    }
 }
