@@ -50,10 +50,12 @@ class SearchViewModel : CustomViewModel() {
 
         if (this.lastTitleSearchString.isEmpty()) {
             this.lastTitleSearchCallback!!.onSuccess(this.webtoonApiController.getWebtoonsList())
+            this.lastTitleSearchCallback = null
             return
         }
 
         Log.d("Search", "Title: ${this.lastTitleSearchString}")
         this.lastTitleSearchCallback!!.onSuccess(this.webtoonApiController.getWebtoonsList().filter { it.getTitle().contains(this.lastTitleSearchString, ignoreCase = true) })
+        this.lastTitleSearchCallback = null
     }
 }

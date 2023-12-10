@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.SearchView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
@@ -17,9 +18,11 @@ import com.example.myapplication.models.WebtoonFolder
 import com.example.myapplication.activities.BaseActivity
 import com.example.myapplication.adapters.RecyclerViewEventsManager
 import com.example.myapplication.adapters.WebtoonsFoldersListAdapter
+import com.example.myapplication.adapters.WebtoonsListAdapter
 import com.example.myapplication.adapters.WebtoonsRecyclerViewHolder
-import com.example.myapplication.firestoredb.data.Firestore
-import com.example.myapplication.firestoredb.data.FirestoreCallback
+import com.example.myapplication.models.Webtoon
+import com.example.myapplication.viewModels.HomeViewModel
+import com.example.myapplication.viewModels.ViewModelCallback
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -33,6 +36,7 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
     private var deleteFolderList: MutableList<String> = mutableListOf()
 
     // Other attributes
+    private val viewModel: HomeViewModel = HomeViewModel()
     private val db: FirebaseFirestore = Firebase.firestore
     private lateinit var spinner: Spinner
     private lateinit var floatingDeleteButton: FloatingActionButton
@@ -58,6 +62,7 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
 
         val uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
         val floatingCreationButton: FloatingActionButton = view.findViewById(R.id.fragmentHome_newFolderButton)
+        val searchBar = view.findViewById<SearchView>(R.id.fragmentHome_searchBar)
         this.floatingDeleteButton = view.findViewById(R.id.fragmentHome_deleteFolderButton)
 
         Log.d("Connected user id", uid)
@@ -113,6 +118,9 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
             // Show the AlertDialog
             builder.show()
         })
+
+        // Listener for the search bar
+        searchBar.setOnQueryTextListener(searchQueryListener())
     }
 
     private fun addFolderToDatabase(uid: String, title: String) {
@@ -129,33 +137,53 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
 
     // Update the RecyclerView with the fetched data
     private fun showDatabaseFolders(uid: String) {
+        // Show an empty list first to reset the previous datas
         setRecyclerViewContent(WebtoonsFoldersListAdapter(listOf<WebtoonFolder>(), this, R.layout.item_webtoon_folder))
 
         this.spinner = Spinner(this)
-        Firestore().WebtoonFolder(uid, object : FirestoreCallback<List<WebtoonFolder>> {
-            override fun onSuccess(result: List<Any>) {
-                Log.d("Success", result.toString())
-                spinner.stop()
 
+        viewModel.getWebtoonFoldersList(uid, object : ViewModelCallback<List<WebtoonFolder>> {
+            override fun onSuccess(result: List<WebtoonFolder>) {
+                Log.d("Webtoon folders fetch success", result.toString())
+                
                 // If there is no folder, display a toaster
                 if (result.isEmpty()) {
                     Toast.makeText(context, getString(R.string.no_folder), Toast.LENGTH_SHORT).show()
                 } else {
-                    setRecyclerViewContent(
-                        WebtoonsFoldersListAdapter(
-                            result, this@HomeFragment, R.layout.item_webtoon_folder
-                        )
-                    )
+                    setRecyclerViewContent(WebtoonsFoldersListAdapter(result, this@HomeFragment, R.layout.item_webtoon_folder))
                 }
-
+                spinner.stop()
             }
 
             override fun onError(e: Throwable) {
-                Log.d("Error", e.toString())
-                spinner.stop()
+                Log.d("Webtoon folders fetch error", e.toString())
                 Toast.makeText(context, getString(R.string.display_error), Toast.LENGTH_SHORT).show()
+                spinner.stop()
             }
         })
+    }
+
+    private fun searchQueryListener(): SearchView.OnQueryTextListener {
+        return object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                viewModel.searchForWebtoonFolder(newText.toString(), object : ViewModelCallback<List<WebtoonFolder>> {
+                    override fun onSuccess(result: List<WebtoonFolder>) {
+                        setRecyclerViewContent(WebtoonsListAdapter(result, this@HomeFragment, R.layout.item_webtoon_folder))
+                        spinner.stop()
+                    }
+
+                    override fun onError(e: Throwable) {
+                        Toast.makeText(context, getString(R.string.display_error), Toast.LENGTH_SHORT).show()
+                        spinner.stop()
+                    }
+                })
+                return true
+            }
+        }
     }
 
     // Change page when click on a folder

@@ -81,6 +81,7 @@ class LibraryFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager
         searchBar.setOnQueryTextListener(searchQueryListener())
     }
 
+    // This method returns a listener for the search bar. It fetches the list of webtoons from the `LibraryViewModel` and sets the content of the RecyclerView.
     private fun searchQueryListener(): SearchView.OnQueryTextListener {
         return object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
