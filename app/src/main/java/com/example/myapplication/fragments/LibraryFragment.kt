@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.SearchView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
@@ -22,6 +23,9 @@ import com.example.myapplication.viewModels.ViewModelCallback
 
 // This class represents a fragment in the application that displays a list of webtoons in a RecyclerView.
 class LibraryFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
+    private var listDisplayLayout: Int = R.layout.item_library_webtoon_list
+    private lateinit var spinner: Spinner
+
     // Initialize the ViewModel
     private var viewModel = LibraryViewModel()
     private lateinit var imageLoader: ImageLoader
@@ -31,7 +35,7 @@ class LibraryFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager
         this.imageLoader = ImageLoader("https://webtoon-phinf.pstatic.net", requireContext())
 
         val view = inflater.inflate(R.layout.fragment_library, container, false)
-        this.initRecyclerViewDisplay(view, R.id.fragmentLibrary_itemsList, WebtoonsListAdapter(listOf<Webtoon>(), this, R.layout.item_library_webtoon_list), LinearLayoutManager(context))
+        this.initRecyclerViewDisplay(view, R.id.fragmentLibrary_itemsList, WebtoonsListAdapter(listOf<Webtoon>(), this, this.listDisplayLayout), LinearLayoutManager(context))
         return view
     }
 
@@ -40,34 +44,63 @@ class LibraryFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager
         super.onViewCreated(view, savedInstanceState)
 
         // Animate the spinner
-        val loader = Spinner(this)
+        spinner = Spinner(this)
 
         // Fetch the list of webtoons from the ViewModel
         this.viewModel.getWebtoonsList(object : ViewModelCallback<List<Webtoon>> {
             // On successful fetch, update the RecyclerView with the fetched data.
             override fun onSuccess(result: List<Webtoon>) {
-                setRecyclerViewContent(WebtoonsListAdapter(result, this@LibraryFragment, R.layout.item_library_webtoon_list))
-                loader.stop()
+                setRecyclerViewContent(WebtoonsListAdapter(result, this@LibraryFragment, listDisplayLayout))
+                spinner.stop()
             }
 
             // On error, log the error and show a toast message.
             override fun onError(e: Throwable) {
                 Log.d("Error", e.toString())
                 Toast.makeText(context, getString(R.string.display_error), Toast.LENGTH_SHORT).show()
-                loader.stop()
+                spinner.stop()
             }
         })
 
         // Listener for the display mode button (grid or list)
         val listDisplayModeButton = view.findViewById<ImageButton>(R.id.fragmentLibrary_listDisplayButton)
         listDisplayModeButton.setOnClickListener {
+            this.listDisplayLayout = R.layout.item_library_webtoon_list
             this.setRecyclerViewContent(WebtoonsListAdapter(this.getRecyclerViewContentList(), this@LibraryFragment, R.layout.item_library_webtoon_list))
             this.changeRecyclerViewLayout(LinearLayoutManager(context))
         }
         val gridDisplayModeButton = view.findViewById<ImageButton>(R.id.fragmentLibrary_gridDisplayButton)
         gridDisplayModeButton.setOnClickListener {
+            this.listDisplayLayout = R.layout.item_library_webtoon_grid
             this.setRecyclerViewContent(WebtoonsListAdapter(this.getRecyclerViewContentList(), this@LibraryFragment, R.layout.item_library_webtoon_grid))
             this.changeRecyclerViewLayout(GridLayoutManager(context, 2))
+        }
+
+        // Listener for the search bar
+        val searchBar = view.findViewById<SearchView>(R.id.fragmentLibrary_searchBar)
+        searchBar.setOnQueryTextListener(searchQueryListener())
+    }
+
+    private fun searchQueryListener(): SearchView.OnQueryTextListener {
+        return object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                viewModel.searchForWebtoon(newText.toString(), object : ViewModelCallback<List<Webtoon>> {
+                    override fun onSuccess(result: List<Webtoon>) {
+                        setRecyclerViewContent(WebtoonsListAdapter(result, this@LibraryFragment, listDisplayLayout))
+                        spinner.stop()
+                    }
+
+                    override fun onError(e: Throwable) {
+                        Toast.makeText(context, getString(R.string.display_error), Toast.LENGTH_SHORT).show()
+                        spinner.stop()
+                    }
+                })
+                return true
+            }
         }
     }
 

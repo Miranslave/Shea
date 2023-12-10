@@ -30,6 +30,20 @@ class LibraryViewModel : CustomViewModel() {
         })
     }
 
+    // Function to search for a Webtoon in the list
+    fun searchForWebtoon(webtoonTitle: String, callback: ViewModelCallback<List<Webtoon>>) {
+        this.webtoonApiController.getRetrofitWebtoonsList(object : ViewModelCallback<List<Webtoon>> {
+            override fun onSuccess(result: List<Webtoon>) {
+                callback.onSuccess(result.filter { it.getTitle().contains(webtoonTitle, ignoreCase = true) })
+            }
+
+            // On error, log the error and show a toast message.
+            override fun onError(e: Throwable) {
+                callback.onError(e)
+            }
+        })
+    }
+
     fun getDatabaseUserReadingList(uid: String): List<Int> {
         var res: List<Int> = emptyList()
         db.collection("UserData").get().addOnSuccessListener { result ->

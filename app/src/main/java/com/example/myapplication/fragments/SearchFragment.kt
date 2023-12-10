@@ -19,7 +19,7 @@ import com.example.myapplication.viewModels.SearchViewModel
 import com.example.myapplication.viewModels.ViewModelCallback
 
 class SearchFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
-    private val model = SearchViewModel()
+    private val viewModel = SearchViewModel()
     private lateinit var imageLoader: ImageLoader
     private lateinit var spinner: Spinner
 
@@ -41,10 +41,10 @@ class SearchFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager 
 
         // Get the SearchView and bind a listener to it
         val searchView = view.findViewById<SearchView>(R.id.fragmentSearch_searchView)
-        searchView.setOnQueryTextListener(searchQueryListener(this.model))
+        searchView.setOnQueryTextListener(searchQueryListener())
 
         // Call the API to get the list of Webtoons to initially show()
-        this.model.getWebtoonList(getWebtoonListCallback())
+        this.viewModel.getWebtoonList(getWebtoonListCallback())
 
         return view
     }
@@ -63,7 +63,7 @@ class SearchFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager 
         }
     }
 
-    private fun searchQueryListener(model: SearchViewModel): SearchView.OnQueryTextListener {
+    private fun searchQueryListener(): SearchView.OnQueryTextListener {
         return object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return true
@@ -71,7 +71,7 @@ class SearchFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager 
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 spinner.start()
-                model.searchForWebtoon(newText.toString(), object : ViewModelCallback<List<Webtoon>> {
+                viewModel.searchForWebtoon(newText.toString(), object : ViewModelCallback<List<Webtoon>> {
                     override fun onSuccess(result: List<Webtoon>) {
                         setRecyclerViewContent(WebtoonsListAdapter(result, this@SearchFragment, R.layout.item_library_webtoon_list))
                         spinner.stop()
