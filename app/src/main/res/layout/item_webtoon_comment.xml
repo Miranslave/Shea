@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
-    android:background="@drawable/border_radius"
+    android:background="@drawable/border_radius_white"
     android:clickable="true"
     android:padding="5dp">
 
@@ -55,7 +55,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_weight="4"
                     android:adjustViewBounds="true"
-                    android:background="@drawable/border_radius"
+                    android:background="@drawable/border_radius_white"
                     android:maxWidth="5dp"
                     android:maxHeight="5dp"
                     android:paddingLeft="5dp"

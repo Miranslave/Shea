@@ -9,7 +9,7 @@ import androidx.appcompat.widget.AppCompatImageButton
 import androidx.fragment.app.Fragment
 import com.example.myapplication.activities.BaseActivity
 import com.example.myapplication.R
-import com.example.myapplication.WebtoonFolder
+import com.example.myapplication.models.WebtoonFolder
 
 class WebtoonFolderDetailsFragment(private val folder: WebtoonFolder) : Fragment() {
 
@@ -27,6 +27,10 @@ class WebtoonFolderDetailsFragment(private val folder: WebtoonFolder) : Fragment
         val title: TextView = view.findViewById(R.id.fragmentWebtoonFolderDetails_titleTextField)
         title.text = folder.getTitle()
         title.isEnabled = false
+
+        // Set the description
+        val description: TextView = view.findViewById(R.id.fragmentWebtoonFolderDetails_descriptionText)
+        description.text = folder.getDescription()
 
         // Set the back button to go back to the home page
         view.findViewById<TextView>(R.id.fragmentWebtoonFolderDetails_previousPageButton).setOnClickListener {

@@ -14,7 +14,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/border_radius"
+            android:background="@drawable/border_radius_white"
             android:orientation="horizontal">
 
             <SearchView
@@ -43,11 +43,22 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="0"
-            android:paddingTop="10dp" />
+            android:paddingTop="10dp" >
+
+        </androidx.recyclerview.widget.RecyclerView>
 
 
     </LinearLayout>
 
+
+    <ImageView
+        android:id="@+id/loading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:padding="150dp"
+        android:src="@drawable/spinner"
+        android:visibility="visible" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fragmentHome_newFolderButton"
@@ -64,11 +75,12 @@
         android:id="@+id/fragmentHome_deleteFolderButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|left"
+        android:layout_gravity="bottom|right"
         android:layout_margin="15dp"
         android:clickable="true"
         android:hapticFeedbackEnabled="true"
-        android:src="@drawable/bookmark_slash"
+        android:src="@drawable/trash"
+        android:visibility="invisible"
         app:backgroundTint="@color/main_red" />
 
 </FrameLayout>

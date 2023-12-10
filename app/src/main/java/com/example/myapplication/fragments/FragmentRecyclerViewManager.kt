@@ -3,6 +3,7 @@ package com.example.myapplication.fragments
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
+import com.example.myapplication.adapters.WebtoonsListAdapter
 
 // Class to manage RecyclerView in a Fragment
 open class FragmentRecyclerViewManager : Fragment() {
@@ -16,6 +17,7 @@ open class FragmentRecyclerViewManager : Fragment() {
         // Assign passed parameters to class variables
         this.viewManager = layout
         this.viewAdapter = adapt
+
         // Initialize RecyclerView with passed parameters
         this.recyclerView = view.findViewById<RecyclerView>(recyclerViewId).apply {
             setHasFixedSize(true)
@@ -29,5 +31,18 @@ open class FragmentRecyclerViewManager : Fragment() {
         // Assign passed adapter to class variable and set it to RecyclerView
         this.viewAdapter = adapter
         this.recyclerView.adapter = this.viewAdapter
+    }
+
+    fun changeRecyclerViewLayout(layout: RecyclerView.LayoutManager) {
+        this.viewManager = layout
+        this.recyclerView.layoutManager = this.viewManager
+    }
+
+    fun getRecyclerView(): RecyclerView {
+        return this.recyclerView
+    }
+
+    fun getRecyclerViewContentList(): List<*> {
+        return (this.recyclerView.adapter as WebtoonsListAdapter).getWebtoonsList()
     }
 }

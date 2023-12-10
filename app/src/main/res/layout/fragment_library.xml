@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0"
-            android:background="@drawable/border_radius"
+            android:background="@drawable/border_radius_white"
             android:orientation="horizontal">
 
             <SearchView
@@ -64,7 +64,7 @@
             android:paddingTop="10dp" />
 
         <ImageView
-            android:id="@+id/fragmentLibrary_loading"
+            android:id="@+id/loading"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
