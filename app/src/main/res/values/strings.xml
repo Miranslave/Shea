@@ -3,6 +3,7 @@
     <string name="title_activity_create_account" translatable="false">CreateAccountActivity</string>
     <string name="title_activity_home" translatable="false">HomeActivity</string>
     <string name="library_tab_title">Bibliothèque</string>
+    <string name="favoris_tab_title">Favoris</string>
     <string name="home_tab_title">Accueil</string>
     <string name="search_tab_title">Recherche</string>
     <string name="settings_tab_title">Paramètres</string>

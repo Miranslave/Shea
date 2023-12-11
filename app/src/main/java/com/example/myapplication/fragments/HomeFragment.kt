@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.RadioGroup
@@ -272,7 +273,10 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
     override fun onItemDraw(holder: WebtoonsRecyclerViewHolder, position: Int, item: Any?) {
         val webtoonFolder = item as WebtoonFolder
         holder.view.findViewById<TextView>(R.id.itemFolder_title).text = webtoonFolder.getTitle()
-
+        if(webtoonFolder.getTitle()=="Favoris") {
+            holder.view.findViewById<ImageView>(R.id.itemFolder_image)
+                .setImageResource(R.drawable.star_filled)
+        }
         holder.itemView.setOnLongClickListener {
             // Select the folder
             setDeleteFolderSelection(position, webtoonFolder, webtoonFolder.canBeDeleted())

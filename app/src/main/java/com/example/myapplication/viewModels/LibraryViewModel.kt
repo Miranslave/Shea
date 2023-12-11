@@ -48,9 +48,7 @@ class LibraryViewModel : CustomViewModel() {
                     res = document.data["read"] as List<Int>
                     Log.d("Data lecture", document.data["read"].toString())
                 }
-
             }
-
         }
         return res
     }

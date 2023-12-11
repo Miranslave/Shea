@@ -50,7 +50,7 @@ class BaseActivity : AppCompatActivity() {
             ), R.id.activityBase_searchTab to mapOf(
                 "fragment" to SearchFragment(), "title" to getString(R.string.search_tab_title)
             ), R.id.activityBase_libraryTab to mapOf(
-                "fragment" to LibraryFragment(), "title" to getString(R.string.library_tab_title)
+                "fragment" to LibraryFragment(), "title" to getString(R.string.favoris_tab_title)
             ), R.id.activityBase_settingsTab to mapOf(
                 "fragment" to SettingsFragment(), "title" to getString(R.string.settings_tab_title)
             )
