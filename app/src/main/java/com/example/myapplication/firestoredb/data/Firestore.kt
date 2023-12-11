@@ -2,6 +2,7 @@ package com.example.myapplication.firestoredb.data
 
 import android.util.Log
 import com.example.myapplication.models.WebtoonFolder
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
@@ -42,7 +43,8 @@ class Firestore {
                     "favorites" to arrayListOf<Long>(),
                 )
 
-                db.collection("Favorite").add(newFavorites).addOnSuccessListener {
+                db.collection("Favorite").document(FirebaseAuth.getInstance().currentUser?.uid.toString()).set(newFavorites)
+                    .addOnSuccessListener {
                     callback.onSuccess(folder)
                 }.addOnFailureListener { exception ->
                     Log.w("Failed", "Error while creating user favorites folder", exception)
@@ -63,3 +65,4 @@ class Firestore {
         }
     }
 }
+
