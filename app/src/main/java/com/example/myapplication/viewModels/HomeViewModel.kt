@@ -3,6 +3,8 @@ package com.example.myapplication.viewModels
 // Import necessary Android and project-specific classes
 import android.content.ContentValues
 import android.util.Log
+import android.widget.Toast
+import com.example.myapplication.R
 import com.example.myapplication.firestoredb.data.Firestore
 import com.example.myapplication.firestoredb.data.FirestoreCallback
 import com.example.myapplication.models.WebtoonFolder
@@ -79,6 +81,44 @@ class HomeViewModel : CustomViewModel() {
         }
     }
 
+    fun getWebtoonFollowedFolderList(callback: ViewModelCallback<List<WebtoonFolder>>) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid.toString()
+
+        db.collection("Follows").document(userId).get()
+            .addOnSuccessListener { document ->
+                val folders = document.data?.get("follows") as? ArrayList<String>
+
+                // No favorite folder found
+                if (folders.isNullOrEmpty()) {
+                    // Create a new favorites document
+                    val newFollows = hashMapOf(
+                        "follows" to arrayListOf<Long>(),
+                    )
+
+                    db.collection("Follows").document(userId).set(newFollows).addOnSuccessListener {
+                        callback.onSuccess(ArrayList<WebtoonFolder>())
+                    }.addOnFailureListener { exception ->
+                        Log.w("Failed", "Error while creating user follows document", exception)
+                        callback.onError(Exception("Error while creating user follows document"))
+                    }
+                } else {
+                    getAllFolders(folders, object : ViewModelCallback<List<WebtoonFolder>>{
+                        override fun onSuccess(result: List<WebtoonFolder>) {
+                            callback.onSuccess(result)
+                        }
+
+                        override fun onError(e: Throwable) {
+                            Log.d("Webtoon followed folders fetch error", e.toString())
+                        }
+                    })
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.w("Failed", "Error while getting user webtoon folders", exception)
+                callback.onError(Exception("Error while getting user webtoon folders"))
+            }
+    }
+
     fun addFolderToDatabase(title: String, description: String, permission: String) {
         val webtoonFolder = hashMapOf(
             "uid" to connectedUser?.uid.toString(), "title" to title, "description" to description, "permission" to permission, "webtoonsid" to arrayListOf<Int>()
@@ -111,4 +151,27 @@ class HomeViewModel : CustomViewModel() {
         }
     }
 
+    fun getAllFolders(folderUidList : ArrayList<String>, callback: ViewModelCallback<List<WebtoonFolder>> ){
+        val res = ArrayList<WebtoonFolder>()
+        db.collection("WebtoonFolder").get().addOnSuccessListener { documents ->
+            for (document in documents) {
+                if (folderUidList.contains(document.id) ) {
+                    val folder = WebtoonFolder(document.data["title"].toString(), document.data["description"].toString(), document.id, document.data["uid"].toString(), true)
+                    val webtoonsIdList = document.data["webtoonsid"] as? ArrayList<Long>
+
+                    // Add webtoons to the folder
+                    for (i in 0..((webtoonsIdList?.size)?.minus(1) ?: 0)) {
+                        webtoonsIdList?.get(i)?.let { folder.addWebtoon(it) }
+                    }
+
+                    res.add(folder)
+                }
+            }
+
+            callback.onSuccess(res)
+        }.addOnFailureListener { exception ->
+            Log.w("Failed", "Error while getting public webtoon folders", exception)
+            callback.onError(Exception("Error while getting public webtoon folders"))
+        }
+    }
 }

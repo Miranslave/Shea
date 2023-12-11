@@ -66,6 +66,7 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
 
         showDatabasePersonalFolders()
         showDatabaseSharedFolders()
+        showDatabaseFollowedFolders()
 
         // Folder creation popup
         floatingCreationButton.setOnClickListener(fun(_: View) {
@@ -169,6 +170,7 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
         searchBar.setOnQueryTextListener(searchQueryListener())
     }
 
+
     // Update the RecyclerView with the fetched data
     private fun showDatabasePersonalFolders() {
         // Show an empty list first to reset the previous datas
@@ -178,8 +180,6 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
 
         viewModel.getPersonalWebtoonFoldersList(object : ViewModelCallback<List<WebtoonFolder>> {
             override fun onSuccess(result: List<WebtoonFolder>) {
-                Log.d("Webtoon folders fetch success", result.toString())
-
                 // If there is no folder, display a toaster
                 if (result.isEmpty()) {
                     Toast.makeText(context, getString(R.string.no_folder), Toast.LENGTH_SHORT).show()
@@ -226,6 +226,34 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
         })
     }
 
+    private fun showDatabaseFollowedFolders() {
+
+        val followedViewManager = GridLayoutManager(context, 2)
+        val followedViewAdapter = WebtoonsFoldersListAdapter(listOf<WebtoonFolder>(), this, R.layout.item_webtoon_folder)
+        val followedRecyclerView = view.findViewById<RecyclerView>(R.id.fragmentHome_followedItemsList)
+        followedRecyclerView.apply {
+            setHasFixedSize(true)
+            layoutManager = followedViewManager
+            adapter = followedViewAdapter
+        }
+
+        viewModel.getWebtoonFollowedFolderList(object : ViewModelCallback<List<WebtoonFolder>> {
+            override fun onSuccess(result: List<WebtoonFolder>) {
+
+                // If there is no folder, display a toaster
+                if (result.isEmpty()) {
+                    Toast.makeText(context, getString(R.string.no_folder), Toast.LENGTH_SHORT).show()
+                } else {
+                    followedRecyclerView.adapter = WebtoonsFoldersListAdapter(result, this@HomeFragment, R.layout.item_webtoon_folder)
+                }
+            }
+
+            override fun onError(e: Throwable) {
+                Log.d("Webtoon public folders fetch error", e.toString())
+                Toast.makeText(context, getString(R.string.display_error), Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
     private fun searchQueryListener(): SearchView.OnQueryTextListener {
         return object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {

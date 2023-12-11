@@ -32,7 +32,6 @@ class SearchViewModel : CustomViewModel() {
     private fun queryApiWebtoonsList() {
         this.webtoonApiController.getRetrofitWebtoonsList(object : ViewModelCallback<List<Webtoon>> {
             override fun onSuccess(result: List<Webtoon>) {
-                Log.d("Search list", "List fetched")
                 searchForWebtoonInList()
             }
 
