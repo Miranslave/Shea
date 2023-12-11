@@ -104,7 +104,19 @@
                 android:id="@+id/fragmentWebtoonFolderDetails_itemsList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:layout_weight="1" >
+
+            </androidx.recyclerview.widget.RecyclerView>
+
+            <ImageView
+                android:id="@+id/fragmentWebtoonFolderDetails_loading"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingLeft="150dp"
+                android:paddingRight="150dp"
+                android:src="@drawable/spinner"
+                android:visibility="visible" />
         </LinearLayout>
     </ScrollView>
 

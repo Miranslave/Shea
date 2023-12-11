@@ -37,6 +37,9 @@ class WebtoonFolderDetailsFragment(private val folder: WebtoonFolder) : Fragment
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Animate the spinner
+        val spinner = Spinner(this.requireView().findViewById(R.id.fragmentWebtoonFolderDetails_loading))
+
         // Set the title
         val title: TextView = view.findViewById(R.id.fragmentWebtoonFolderDetails_titleTextField)
         title.text = folder.getTitle()
@@ -73,11 +76,13 @@ class WebtoonFolderDetailsFragment(private val folder: WebtoonFolder) : Fragment
         viewModel.getWebtoonsList(object : ViewModelCallback<List<Webtoon>> {
             // On successful fetch, update the RecyclerView with the fetched data.
             override fun onSuccess(result: List<Webtoon>) {
+                spinner.stop()
                 setRecyclerViewContent(WebtoonsListAdapter(result, this@WebtoonFolderDetailsFragment, R.layout.item_library_webtoon_list))
             }
 
             // On error, log the error and show a toast message.
             override fun onError(e: Throwable) {
+                spinner.stop()
                 Log.d("Error", e.toString())
                 Toast.makeText(context, getString(R.string.display_error), Toast.LENGTH_SHORT).show()
             }
