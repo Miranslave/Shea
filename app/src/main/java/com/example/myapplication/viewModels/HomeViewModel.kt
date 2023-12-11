@@ -6,6 +6,7 @@ import android.util.Log
 import com.example.myapplication.firestoredb.data.Firestore
 import com.example.myapplication.firestoredb.data.FirestoreCallback
 import com.example.myapplication.models.WebtoonFolder
+import com.google.firebase.auth.FirebaseAuth
 
 // Define a ViewModel for the Library
 class HomeViewModel : CustomViewModel() {
@@ -53,6 +54,32 @@ class HomeViewModel : CustomViewModel() {
         })
     }
 
+    fun getWebtoonPublicFolderList(callback: ViewModelCallback<List<WebtoonFolder>>) {
+        val res = ArrayList<WebtoonFolder>()
+        db.collection("WebtoonFolder").get()
+            .addOnSuccessListener{documents ->
+                for(document in documents){
+                    if(document.data.get("uid")!=FirebaseAuth.getInstance().currentUser?.uid &&
+                        document.data.get("permission").toString() == "public"){
+                        val folder = WebtoonFolder(document.data["title"].toString(), document.data["description"].toString(), document.id)
+                        val webtoonsIdList = document.data["webtoonsid"] as? ArrayList<Long>
+
+                        // Add webtoons to the folder
+                        for (i in 0..((webtoonsIdList?.size)?.minus(1) ?: 0)) {
+                            webtoonsIdList?.get(i)?.let { folder.addWebtoon(it) }
+                        }
+
+                        res.add(folder)
+                    }
+                }
+
+                callback.onSuccess(res)
+            }
+            .addOnFailureListener { exception ->
+                Log.w("Failed", "Error while getting public webtoon folders", exception)
+                callback.onError(Exception("Error while getting public webtoon folders"))
+            }
+    }
     fun addFolderToDatabase(title: String, description: String, permission: String) {
         val webtoonFolder = hashMapOf(
             "uid" to connectedUser?.uid.toString(),
@@ -75,4 +102,5 @@ class HomeViewModel : CustomViewModel() {
                 db.collection("WebtoonFolder").document(it.getDatabaseId()).delete()
             }
     }
+
 }

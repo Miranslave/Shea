@@ -15,6 +15,7 @@ import android.widget.SearchView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
 import com.example.myapplication.activities.BaseActivity
 import com.example.myapplication.adapters.RecyclerViewEventsManager
@@ -37,21 +38,21 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
     private val viewModel: HomeViewModel = HomeViewModel()
     private lateinit var spinner: Spinner
     private lateinit var floatingDeleteButton: FloatingActionButton
-
+    private lateinit var view: View
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_home, container, false)
+        this.view = inflater.inflate(R.layout.fragment_home, container, false)
 
         // Set up the RecyclerView with a grid layout to display folders in 2 columns
         this.initRecyclerViewDisplay(
             view, R.id.fragmentHome_itemsList, WebtoonsFoldersListAdapter(listOf<WebtoonFolder>(), this, R.layout.item_webtoon_folder), GridLayoutManager(context, 2)
         )
 
-        return view
+        return this.view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -63,6 +64,7 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
         this.floatingDeleteButton = view.findViewById(R.id.fragmentHome_deleteFolderButton)
 
         showDatabaseFolders()
+        showDatabasePublicFolders()
 
         // Folder creation popup
         floatingCreationButton.setOnClickListener(fun(_: View) {
@@ -193,6 +195,34 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
         })
     }
 
+    private fun showDatabasePublicFolders() {
+        // Show an empty list first to reset the previous datas
+        val publicViewManager = GridLayoutManager(context, 2)
+        val publicViewAdapter = WebtoonsFoldersListAdapter(listOf<WebtoonFolder>(), this, R.layout.item_webtoon_folder)
+        val publicRecyclerView = view.findViewById<RecyclerView>(R.id.fragmentHome_publicItemsList)
+        publicRecyclerView.apply{
+            setHasFixedSize(true)
+            layoutManager = publicViewManager
+            adapter = publicViewAdapter
+        }
+
+        viewModel.getWebtoonPublicFolderList(object : ViewModelCallback<List<WebtoonFolder>> {
+            override fun onSuccess(result: List<WebtoonFolder>) {
+
+                // If there is no folder, display a toaster
+                if (result.isEmpty()) {
+                    Toast.makeText(context, getString(R.string.no_folder), Toast.LENGTH_SHORT).show()
+                } else {
+                    publicRecyclerView.adapter = WebtoonsFoldersListAdapter(result, this@HomeFragment, R.layout.item_webtoon_folder)
+                }
+            }
+
+            override fun onError(e: Throwable) {
+                Log.d("Webtoon public folders fetch error", e.toString())
+                Toast.makeText(context, getString(R.string.display_error), Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
     private fun searchQueryListener(): SearchView.OnQueryTextListener {
         return object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
