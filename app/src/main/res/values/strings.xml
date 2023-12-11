@@ -20,7 +20,7 @@
     <string name="author_1_name" translatable="false">Alex Ding</string>
     <string name="author_2_name" translatable="false">Killian Denéchère</string>
     <string name="author_3_name" translatable="false">Farès Zaroui</string>
-    <string name="helpText">Texte temporaire de l\'explication du fonctionnement de l\'application</string>
+    <string name="helpText">Oups ! Il semble que notre page d’aide ait pris des vacances. Revenez plus tard pour des conseils utiles !</string>
     <string name="previous_page_button">‹ page précédente</string>
     <string name="select_folders_to_remove">Choisis les dossiers à supprimer.</string>
     <string name="display_error">Une erreur empêche l\'affichage</string>
