@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatImageButton
@@ -45,9 +46,11 @@ class WebtoonFolderDetailsFragment(private val folder: WebtoonFolder) : Fragment
         title.text = folder.getTitle()
         title.isEnabled = false
 
+
         // Set the description
-        val description: TextView = view.findViewById(R.id.fragmentWebtoonFolderDetails_descriptionText)
-        description.text = folder.getDescription()
+        val description: EditText = view.findViewById(R.id.fragmentWebtoonFolderDetails_descriptionText)
+        description.setText(folder.getDescription())
+        description.isEnabled = false
 
         // Set the back button to go back to the home page
         view.findViewById<TextView>(R.id.fragmentWebtoonFolderDetails_previousPageButton).setOnClickListener {
@@ -57,6 +60,8 @@ class WebtoonFolderDetailsFragment(private val folder: WebtoonFolder) : Fragment
         // Set the edit button
         view.findViewById<AppCompatImageButton>(R.id.fragmentWebtoonFolderDetails_editButton).setOnClickListener {
             title.isEnabled = !title.isEnabled
+            description.isEnabled = !description.isEnabled
+
         }
 
         // Set the add webtoon button

@@ -51,25 +51,33 @@
                     android:scaleType="centerInside"
                     android:src="@drawable/pencil" />
 
+
             </LinearLayout>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="25dp"
-                android:layout_marginBottom="15dp"
-                android:layout_weight="0"
-                android:fontFamily="@font/syncopate"
-                android:text="Description"
-                android:textSize="20sp"
-                android:textStyle="bold" />
 
-            <TextView
+
+                <TextView
+                    android:layout_width="357dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="25dp"
+                    android:layout_marginBottom="15dp"
+                    android:layout_weight="0"
+                    android:fontFamily="@font/syncopate"
+                    android:text="Description"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+
+
+            <EditText
                 android:id="@+id/fragmentWebtoonFolderDetails_descriptionText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0"
-                android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident" />
+                android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident"
+                android:textSize="10sp"
+                android:inputType="textFilter|textMultiLine"
+                android:background="@android:color/transparent"/>
 
             <LinearLayout
                 android:layout_width="match_parent"

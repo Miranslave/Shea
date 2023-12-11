@@ -46,7 +46,6 @@ class LibraryViewModel : CustomViewModel() {
             for (document in result) {
                 if (document.data["uid"] == uid) {
                     res = document.data["read"] as List<Int>
-
                     Log.d("Data lecture", document.data["read"].toString())
                 }
 
