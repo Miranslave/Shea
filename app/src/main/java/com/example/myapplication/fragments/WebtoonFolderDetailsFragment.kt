@@ -22,7 +22,7 @@ import com.example.myapplication.viewModels.ViewModelCallback
 import com.google.android.material.textview.MaterialTextView
 
 class WebtoonFolderDetailsFragment(private val folder: WebtoonFolder) : FragmentRecyclerViewManager(),
-    RecyclerViewEventsManager {
+    RecyclerViewEventsManager, BackButtonHandler {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -48,8 +48,7 @@ class WebtoonFolderDetailsFragment(private val folder: WebtoonFolder) : Fragment
 
         // Set the back button to go back to the home page
         view.findViewById<TextView>(R.id.fragmentWebtoonFolderDetails_previousPageButton).setOnClickListener {
-            (activity as? BaseActivity)?.changeFragment(HomeFragment())
-            (activity as? BaseActivity)?.changeTitle(getString(R.string.home_tab_title))
+            this.goBack()
         }
 
         // Set the edit button
@@ -100,5 +99,10 @@ class WebtoonFolderDetailsFragment(private val folder: WebtoonFolder) : Fragment
         holder.view.findViewById<TextView>(R.id.itemLibrary_synopsis)?.text = webtoon.getSynopsis()
         val imageLoader = ImageLoader("https://webtoon-phinf.pstatic.net", requireContext())
         imageLoader.load(holder.view.findViewById(R.id.itemLibrary_image), webtoon.getThumbnail())
+    }
+
+    override fun goBack() {
+        (activity as? BaseActivity)?.changeFragment(HomeFragment())
+        (activity as? BaseActivity)?.changeTitle(getString(R.string.home_tab_title))
     }
 }

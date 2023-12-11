@@ -6,17 +6,11 @@ import android.util.Log
 import com.example.myapplication.firestoredb.data.Firestore
 import com.example.myapplication.firestoredb.data.FirestoreCallback
 import com.example.myapplication.models.WebtoonFolder
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 
 // Define a ViewModel for the Library
 class HomeViewModel : CustomViewModel() {
     private var webtoonCallbackList: List<ViewModelCallback<List<WebtoonFolder>>> = emptyList()
     private var webtoonFoldersList: List<WebtoonFolder> = emptyList()
-    private val db: FirebaseFirestore = Firebase.firestore
-    val connectedUserId = FirebaseAuth.getInstance().currentUser?.uid.toString()
 
     // Function to search for a Webtoon in the list
     fun searchForWebtoonFolder(webtoonTitle: String, callback: ViewModelCallback<List<WebtoonFolder>>) {
@@ -28,11 +22,11 @@ class HomeViewModel : CustomViewModel() {
     }
 
     fun getWebtoonFoldersList(callback: ViewModelCallback<List<WebtoonFolder>>) {
-        Firestore().getUserWebtoonFolders(connectedUserId, object : FirestoreCallback<List<WebtoonFolder>> {
+        Firestore().getUserWebtoonFolders(connectedUser?.uid.toString(), object : FirestoreCallback<List<WebtoonFolder>> {
             override fun onSuccess(result: List<WebtoonFolder>) {
                 webtoonFoldersList = result
 
-                Firestore().getUserFavoriteWebtoonsFolder(connectedUserId, object : FirestoreCallback<WebtoonFolder> {
+                Firestore().getUserFavoriteWebtoonsFolder(connectedUser?.uid.toString(), object : FirestoreCallback<WebtoonFolder> {
                     override fun onSuccess(result: WebtoonFolder) {
                         webtoonFoldersList += result
 
@@ -60,7 +54,7 @@ class HomeViewModel : CustomViewModel() {
     }
 
     fun addFolderToDatabase(title: String) {
-        val webtoonFolder = hashMapOf("uid" to connectedUserId, "title" to title, "description" to "", "webtoonsid" to arrayListOf<Int>())
+        val webtoonFolder = hashMapOf("uid" to connectedUser?.uid.toString(), "title" to title, "description" to "", "webtoonsid" to arrayListOf<Int>())
 
         db.collection("WebtoonFolder").document().set(webtoonFolder).addOnSuccessListener {
             Log.d(ContentValues.TAG, "DocumentSnapshot successfully written!")

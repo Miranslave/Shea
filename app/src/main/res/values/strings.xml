@@ -33,4 +33,12 @@
     <string name="add">Ajouter</string>
     <string name="add_to_folder">Ajouter à un dossier</string>
     <string name="save">Sauvegarder</string>
+    <string name="no_bookmarks_folder">Rendez-vous à l\'accueil pour créer votre premier dossier</string>
+    <string name="comment_error">Erreur lors de l\'enregistrement du commentaire</string>
+    <string name="comment_published">Votre commentaire a bien été publié</string>
+    <string name="favorite_removed">Le webtoon a bien été retiré des favoris</string>
+    <string name="favorite_error">Une erreur empêche la modification des favoris</string>
+    <string name="favorite_added">Le webtoon a bien été ajouté aux favoris</string>
+    <string name="bookmark_updated">Modifications sauvegardées</string>
+    <string name="bookmark_error">Une erreur empêche la modification des dossiers</string>
 </resources>

@@ -9,6 +9,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.myapplication.R
+import com.example.myapplication.fragments.BackButtonHandler
 import com.example.myapplication.fragments.HomeFragment
 import com.example.myapplication.fragments.LibraryFragment
 import com.example.myapplication.fragments.SearchFragment
@@ -57,6 +58,15 @@ class BaseActivity : AppCompatActivity() {
 
         this.tabs.keys.forEach { id ->
             findViewById<View>(id).setOnClickListener { changeToTab(id) }
+        }
+    }
+
+    override fun onBackPressed() {
+        val fragment = supportFragmentManager.findFragmentById(R.id.activityBase_fragmentsContainer)
+        if (fragment is BackButtonHandler) {
+            fragment.goBack()
+        } else {
+            super.onBackPressed()
         }
     }
 

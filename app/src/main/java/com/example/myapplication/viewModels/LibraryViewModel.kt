@@ -4,14 +4,10 @@ package com.example.myapplication.viewModels
 import android.util.Log
 import com.example.myapplication.models.Webtoon
 import com.example.myapplication.network.WebtoonApiController
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 
 // Define a ViewModel for the Library
 class LibraryViewModel : CustomViewModel() {
-    private val db = Firebase.firestore
     private val webtoonApiController = WebtoonApiController.getInstance()
-
     // Define a list of Webtoon IDs
     private var webtoonsIdsList: List<Int> = listOf(75, 418, 676, 5727, 4940, 3485, 2467)
 
@@ -48,10 +44,10 @@ class LibraryViewModel : CustomViewModel() {
         var res: List<Int> = emptyList()
         db.collection("UserData").get().addOnSuccessListener { result ->
             for (document in result) {
-                if (document.data.get("uid") == uid) {
-                    res = document.data.get("Read") as List<Int>
+                if (document.data["uid"] == uid) {
+                    res = document.data["read"] as List<Int>
 
-                    Log.d("Data lecture", document.data.get("Read").toString())
+                    Log.d("Data lecture", document.data["read"].toString())
                 }
 
             }

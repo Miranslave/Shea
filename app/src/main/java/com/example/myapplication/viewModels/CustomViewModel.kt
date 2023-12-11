@@ -1,6 +1,11 @@
 package com.example.myapplication.viewModels
 
 import androidx.lifecycle.ViewModel
+import com.example.myapplication.firestoredb.data.Firestore
+import com.example.myapplication.network.WebtoonApiController
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -10,6 +15,9 @@ import kotlin.reflect.full.callSuspend
 
 // Custom ViewModel class that extends the ViewModel class
 open class CustomViewModel : ViewModel() {
+    val firestore: Firestore = Firestore()
+    val db = Firebase.firestore
+    val connectedUser = FirebaseAuth.getInstance().currentUser
 
     // Function to execute a given function in a coroutine scope
     fun <R> executeInCoroutineScope(function: KFunction<R>, params: List<Any>, callback: ViewModelCallback<R>) {
