@@ -59,6 +59,7 @@
                 android:layout_marginTop="25dp"
                 android:layout_marginBottom="15dp"
                 android:layout_weight="0"
+                android:fontFamily="@font/syncopate"
                 android:text="Mes dossiers suivis"
                 android:textSize="20sp"
                 android:textStyle="bold" />

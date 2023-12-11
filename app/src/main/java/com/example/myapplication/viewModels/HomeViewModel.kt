@@ -3,8 +3,6 @@ package com.example.myapplication.viewModels
 // Import necessary Android and project-specific classes
 import android.content.ContentValues
 import android.util.Log
-import android.widget.Toast
-import com.example.myapplication.R
 import com.example.myapplication.firestoredb.data.Firestore
 import com.example.myapplication.firestoredb.data.FirestoreCallback
 import com.example.myapplication.models.WebtoonFolder
@@ -62,7 +60,7 @@ class HomeViewModel : CustomViewModel() {
         db.collection("WebtoonFolder").get().addOnSuccessListener { documents ->
             for (document in documents) {
                 if (document.data["uid"] != FirebaseAuth.getInstance().currentUser?.uid && document.data["permission"].toString() == "public") {
-                    val folder = WebtoonFolder(document.data["title"].toString(), document.data["description"].toString(), document.id, document.data["uid"].toString(), true)
+                    val folder = WebtoonFolder(document.data["title"].toString(), document.data["description"].toString(), document.id, document.data["uid"].toString(), true, false)
                     val webtoonsIdList = document.data["webtoonsid"] as? ArrayList<Long>
 
                     // Add webtoons to the folder
@@ -96,14 +94,15 @@ class HomeViewModel : CustomViewModel() {
                     )
 
                     db.collection("Follows").document(userId).set(newFollows).addOnSuccessListener {
-                        callback.onSuccess(ArrayList<WebtoonFolder>())
+                        callback.onSuccess(ArrayList())
                     }.addOnFailureListener { exception ->
                         Log.w("Failed", "Error while creating user follows document", exception)
                         callback.onError(Exception("Error while creating user follows document"))
                     }
                 } else {
-                    getAllFolders(folders, object : ViewModelCallback<List<WebtoonFolder>>{
+                    getAllFoldersOfList(folders, object : ViewModelCallback<List<WebtoonFolder>>{
                         override fun onSuccess(result: List<WebtoonFolder>) {
+                            result.forEach { it.setDeletionAuthorization(false) }
                             callback.onSuccess(result)
                         }
 
@@ -151,7 +150,7 @@ class HomeViewModel : CustomViewModel() {
         }
     }
 
-    fun getAllFolders(folderUidList : ArrayList<String>, callback: ViewModelCallback<List<WebtoonFolder>> ){
+    private fun getAllFoldersOfList(folderUidList : ArrayList<String>, callback: ViewModelCallback<List<WebtoonFolder>> ){
         val res = ArrayList<WebtoonFolder>()
         db.collection("WebtoonFolder").get().addOnSuccessListener { documents ->
             for (document in documents) {

@@ -26,8 +26,7 @@ import com.example.myapplication.viewModels.WebtoonFolderDetailsViewModel
 import com.google.android.material.textview.MaterialTextView
 import com.google.firebase.auth.FirebaseAuth
 
-class WebtoonFolderDetailsFragment(private val folder: WebtoonFolder) : FragmentRecyclerViewManager(),
-    RecyclerViewEventsManager, BackButtonHandler {
+class WebtoonFolderDetailsFragment(private val folder: WebtoonFolder) : FragmentRecyclerViewManager(), RecyclerViewEventsManager, BackButtonHandler {
 
     private val viewModel: WebtoonFolderDetailsViewModel = WebtoonFolderDetailsViewModel()
 
@@ -59,38 +58,41 @@ class WebtoonFolderDetailsFragment(private val folder: WebtoonFolder) : Fragment
             this.goBack()
         }
 
-
         // Set the add webtoon button
         view.findViewById<MaterialTextView>(R.id.fragmentWebtoonFolderDetails_addWebtoonButton).setOnClickListener {
             (activity as? BaseActivity)?.changeFragment(SearchFragment())
             (activity as? BaseActivity)?.changeTitle(getString(R.string.search_tab_title))
         }
 
-        // set follow and edit button
+        // Set follow and edit button
         val followButton = view.findViewById<Button>(R.id.fragmentWebtoonFolderDetails_followButton)
         val editButton = view.findViewById<AppCompatImageButton>(R.id.fragmentWebtoonFolderDetails_editButton)
-        if(folder.getAuthorId() == FirebaseAuth.getInstance().currentUser?.uid){
+        val addButton = view.findViewById<MaterialTextView>(R.id.fragmentWebtoonFolderDetails_addWebtoonButton)
+
+        // If the user is the author of the folder, show the edit button
+        if (folder.getAuthorId() == FirebaseAuth.getInstance().currentUser?.uid) {
             followButton.visibility = View.GONE
             editButton.setOnClickListener {
                 title.isEnabled = !title.isEnabled
                 description.isEnabled = !description.isEnabled
-                HomeViewModel().changeFolderInfo(title.text.toString(),description.text.toString(),folder.getDatabaseId())
+                HomeViewModel().changeFolderInfo(title.text.toString(), description.text.toString(), folder.getDatabaseId())
+            }
+        } else {
+            editButton.visibility = View.GONE
+            addButton.visibility = View.GONE
+            title.background = null
+
+            followButton.setOnClickListener {
+                viewModel.followFolder(folder)
+                Toast.makeText(context, getString(R.string.success_follow), Toast.LENGTH_SHORT).show()
             }
         }
-        else {
-            followButton.setOnClickListener {
-                    viewModel.followFolder(folder)
-                    Toast.makeText(context, getString(R.string.success_follow), Toast.LENGTH_SHORT)
-                        .show()
-                }
-            editButton.visibility = View.GONE
-            title.background = null
-        }
-        this.viewModel.getWebtoonsList(folder.getWebtoons().map { it -> it.getId() }, object : ViewModelCallback<List<Webtoon>> {
+
+        this.viewModel.getWebtoonsList(folder.getWebtoons().map { it.getId() }, object : ViewModelCallback<List<Webtoon>> {
             // On successful fetch, update the RecyclerView with the fetched data.
             override fun onSuccess(result: List<Webtoon>) {
-                spinner.stop()
                 setRecyclerViewContent(WebtoonsListAdapter(result, this@WebtoonFolderDetailsFragment, R.layout.item_library_webtoon_list))
+                spinner.stop()
             }
 
             // On error, log the error and show a toast message.

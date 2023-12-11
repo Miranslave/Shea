@@ -210,13 +210,7 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
 
         viewModel.getWebtoonSharedFolderList(object : ViewModelCallback<List<WebtoonFolder>> {
             override fun onSuccess(result: List<WebtoonFolder>) {
-
-                // If there is no folder, display a toaster
-                if (result.isEmpty()) {
-                    Toast.makeText(context, getString(R.string.no_folder), Toast.LENGTH_SHORT).show()
-                } else {
-                    publicRecyclerView.adapter = WebtoonsFoldersListAdapter(result, this@HomeFragment, R.layout.item_webtoon_folder)
-                }
+                publicRecyclerView.adapter = WebtoonsFoldersListAdapter(result, this@HomeFragment, R.layout.item_webtoon_folder)
             }
 
             override fun onError(e: Throwable) {
@@ -227,7 +221,6 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
     }
 
     private fun showDatabaseFollowedFolders() {
-
         val followedViewManager = GridLayoutManager(context, 2)
         val followedViewAdapter = WebtoonsFoldersListAdapter(listOf<WebtoonFolder>(), this, R.layout.item_webtoon_folder)
         val followedRecyclerView = view.findViewById<RecyclerView>(R.id.fragmentHome_followedItemsList)
@@ -239,13 +232,7 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
 
         viewModel.getWebtoonFollowedFolderList(object : ViewModelCallback<List<WebtoonFolder>> {
             override fun onSuccess(result: List<WebtoonFolder>) {
-
-                // If there is no folder, display a toaster
-                if (result.isEmpty()) {
-                    Toast.makeText(context, getString(R.string.no_folder), Toast.LENGTH_SHORT).show()
-                } else {
-                    followedRecyclerView.adapter = WebtoonsFoldersListAdapter(result, this@HomeFragment, R.layout.item_webtoon_folder)
-                }
+                followedRecyclerView.adapter = WebtoonsFoldersListAdapter(result, this@HomeFragment, R.layout.item_webtoon_folder)
             }
 
             override fun onError(e: Throwable) {
@@ -254,6 +241,7 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
             }
         })
     }
+
     private fun searchQueryListener(): SearchView.OnQueryTextListener {
         return object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {

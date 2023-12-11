@@ -5,7 +5,7 @@ class WebtoonFolder {
     private val description: String
     private val webtoons: ArrayList<Webtoon>
     private val databaseId: String
-    private val allowDeletion: Boolean
+    private var allowDeletion: Boolean
     private val isPublic: Boolean
     private val authorId: String
 
@@ -59,5 +59,9 @@ class WebtoonFolder {
 
     fun getAuthorId(): String {
         return this.authorId
+    }
+
+    fun setDeletionAuthorization(canBeErased: Boolean) {
+        this.allowDeletion = canBeErased
     }
 }

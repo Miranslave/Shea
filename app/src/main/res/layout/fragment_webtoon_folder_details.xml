@@ -51,23 +51,16 @@
                     android:scaleType="centerInside"
                     android:src="@drawable/pencil" />
 
-
-            </LinearLayout>
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:orientation="horizontal">
-
                 <Button
                     android:id="@+id/fragmentWebtoonFolderDetails_followButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Suivre"
                     android:textAlignment="center" />
+
+
             </LinearLayout>
+
 
             <TextView
                 android:layout_width="357dp"
