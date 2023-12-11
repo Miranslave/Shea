@@ -6,14 +6,17 @@ class WebtoonFolder {
     private val webtoons: ArrayList<Webtoon>
     private val databaseId: String
     private val allowDeletion: Boolean
+    private val isPublic: Boolean
+    private val authorId: String
 
-
-    constructor(title: String, description: String, databaseId: String, allowDeletion: Boolean = true) {
+    constructor(title: String, description: String, databaseId: String, authorId: String, isPublic:Boolean, allowDeletion: Boolean = true) {
         this.title = title
         this.description = description
         this.webtoons = ArrayList()
         this.databaseId = databaseId
         this.allowDeletion = allowDeletion
+        this.isPublic = isPublic
+        this.authorId = authorId
     }
 
     fun getTitle(): String {
@@ -48,5 +51,13 @@ class WebtoonFolder {
 
     fun canBeDeleted(): Boolean {
         return this.allowDeletion
+    }
+
+    fun isPublic(): Boolean {
+        return this.isPublic
+    }
+
+    fun getAuthorId(): String {
+        return this.authorId
     }
 }

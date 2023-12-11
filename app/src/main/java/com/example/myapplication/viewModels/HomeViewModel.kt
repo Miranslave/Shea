@@ -22,11 +22,12 @@ class HomeViewModel : CustomViewModel() {
         }
     }
 
-    fun getWebtoonFoldersList(callback: ViewModelCallback<List<WebtoonFolder>>) {
+    fun getPersonalWebtoonFoldersList(callback: ViewModelCallback<List<WebtoonFolder>>) {
         Firestore().getUserWebtoonFolders(connectedUser?.uid.toString(), object : FirestoreCallback<List<WebtoonFolder>> {
             override fun onSuccess(result: List<WebtoonFolder>) {
                 webtoonFoldersList = result
 
+                // Get the user favorite webtoons folder
                 Firestore().getUserFavoriteWebtoonsFolder(connectedUser?.uid.toString(), object : FirestoreCallback<WebtoonFolder> {
                     override fun onSuccess(result: WebtoonFolder) {
                         webtoonFoldersList += result
@@ -54,39 +55,34 @@ class HomeViewModel : CustomViewModel() {
         })
     }
 
-    fun getWebtoonPublicFolderList(callback: ViewModelCallback<List<WebtoonFolder>>) {
+    fun getWebtoonSharedFolderList(callback: ViewModelCallback<List<WebtoonFolder>>) {
         val res = ArrayList<WebtoonFolder>()
-        db.collection("WebtoonFolder").get()
-            .addOnSuccessListener{documents ->
-                for(document in documents){
-                    if(document.data.get("uid")!=FirebaseAuth.getInstance().currentUser?.uid &&
-                        document.data.get("permission").toString() == "public"){
-                        val folder = WebtoonFolder(document.data["title"].toString(), document.data["description"].toString(), document.id)
-                        val webtoonsIdList = document.data["webtoonsid"] as? ArrayList<Long>
+        db.collection("WebtoonFolder").get().addOnSuccessListener { documents ->
+            for (document in documents) {
+                if (document.data["uid"] != FirebaseAuth.getInstance().currentUser?.uid && document.data["permission"].toString() == "public") {
+                    val folder = WebtoonFolder(document.data["title"].toString(), document.data["description"].toString(), document.id, document.data["uid"].toString(), true)
+                    val webtoonsIdList = document.data["webtoonsid"] as? ArrayList<Long>
 
-                        // Add webtoons to the folder
-                        for (i in 0..((webtoonsIdList?.size)?.minus(1) ?: 0)) {
-                            webtoonsIdList?.get(i)?.let { folder.addWebtoon(it) }
-                        }
-
-                        res.add(folder)
+                    // Add webtoons to the folder
+                    for (i in 0..((webtoonsIdList?.size)?.minus(1) ?: 0)) {
+                        webtoonsIdList?.get(i)?.let { folder.addWebtoon(it) }
                     }
-                }
 
-                callback.onSuccess(res)
+                    res.add(folder)
+                }
             }
-            .addOnFailureListener { exception ->
-                Log.w("Failed", "Error while getting public webtoon folders", exception)
-                callback.onError(Exception("Error while getting public webtoon folders"))
-            }
+
+            callback.onSuccess(res)
+        }.addOnFailureListener { exception ->
+            Log.w("Failed", "Error while getting public webtoon folders", exception)
+            callback.onError(Exception("Error while getting public webtoon folders"))
+        }
     }
+
     fun addFolderToDatabase(title: String, description: String, permission: String) {
         val webtoonFolder = hashMapOf(
-            "uid" to connectedUser?.uid.toString(),
-            "title" to title,
-            "description" to description,
-            "permission" to permission,
-            "webtoonsid" to arrayListOf<Int>())
+            "uid" to connectedUser?.uid.toString(), "title" to title, "description" to description, "permission" to permission, "webtoonsid" to arrayListOf<Int>()
+        )
 
         db.collection("WebtoonFolder").document().set(webtoonFolder).addOnSuccessListener {
             Log.d(ContentValues.TAG, "DocumentSnapshot successfully written!")
@@ -97,25 +93,22 @@ class HomeViewModel : CustomViewModel() {
 
     fun deleteFolderFromDatabase(databaseIdsList: List<WebtoonFolder>) {
         databaseIdsList.filter {
-                it.canBeDeleted()
-            }.forEach {
-                db.collection("WebtoonFolder").document(it.getDatabaseId()).delete()
-            }
+            it.canBeDeleted()
+        }.forEach {
+            db.collection("WebtoonFolder").document(it.getDatabaseId()).delete()
+        }
     }
 
     fun changeFolderInfo(title: String, description: String, dbid: String) {
         val updates = hashMapOf(
-            "title" to title,
-            "description" to description
+            "title" to title, "description" to description
         )
 
-        db.collection("WebtoonFolder").document(dbid).update(updates as Map<String, Any>)
-            .addOnSuccessListener {
-                Log.d("WebtoonFolder", "Title and description successfully changed")
-            }
-            .addOnFailureListener{e->
-                Log.d("WebtoonFolder", "Title and description change failed", e)
-            }
+        db.collection("WebtoonFolder").document(dbid).update(updates as Map<String, Any>).addOnSuccessListener {
+            Log.d("WebtoonFolder", "Title and description successfully changed")
+        }.addOnFailureListener { e ->
+            Log.d("WebtoonFolder", "Title and description change failed", e)
+        }
     }
 
 }

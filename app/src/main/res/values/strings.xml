@@ -44,4 +44,8 @@
     <string name="bookmark_error">Une erreur empêche la modification des dossiers</string>
     <string name="no_title">Vous devez mettre un titre</string>
     <string name="baseTitle">Accueil</string>
+    <string name="shared">Publique</string>
+    <string name="unshared">Privée</string>
+    <string name="title">Titre</string>
+    <string name="description">Description</string>
 </resources>

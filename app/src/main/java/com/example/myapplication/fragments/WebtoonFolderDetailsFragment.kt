@@ -21,18 +21,18 @@ import com.example.myapplication.models.WebtoonFolder
 import com.example.myapplication.viewModels.HomeViewModel
 import com.example.myapplication.viewModels.LibraryViewModel
 import com.example.myapplication.viewModels.ViewModelCallback
+import com.example.myapplication.viewModels.WebtoonFolderDetailsViewModel
 import com.google.android.material.textview.MaterialTextView
 
 class WebtoonFolderDetailsFragment(private val folder: WebtoonFolder) : FragmentRecyclerViewManager(),
     RecyclerViewEventsManager, BackButtonHandler {
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View? {
+    private val viewModel: WebtoonFolderDetailsViewModel = WebtoonFolderDetailsViewModel()
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_webtoon_folder_details, container, false)
         this.initRecyclerViewDisplay(view, R.id.fragmentWebtoonFolderDetails_itemsList, WebtoonsListAdapter(listOf<Webtoon>(), this, R.layout.item_library_webtoon_list), LinearLayoutManager(context))
-
         return view
     }
 
@@ -46,7 +46,6 @@ class WebtoonFolderDetailsFragment(private val folder: WebtoonFolder) : Fragment
         val title: TextView = view.findViewById(R.id.fragmentWebtoonFolderDetails_titleTextField)
         title.text = folder.getTitle()
         title.isEnabled = false
-
 
         // Set the description
         val description: EditText = view.findViewById(R.id.fragmentWebtoonFolderDetails_descriptionText)
@@ -71,15 +70,8 @@ class WebtoonFolderDetailsFragment(private val folder: WebtoonFolder) : Fragment
             (activity as? BaseActivity)?.changeTitle(getString(R.string.search_tab_title))
         }
 
-        val webtoonList = folder.getWebtoons()
-        val webtoonIdList = mutableListOf<Int>()
 
-        for(webtoon in webtoonList){
-            webtoonIdList.add(webtoon.getId())
-        }
-        val viewModel = LibraryViewModel()
-        viewModel.setIdList(webtoonIdList)
-        viewModel.getWebtoonsList(object : ViewModelCallback<List<Webtoon>> {
+        this.viewModel.getWebtoonsList(folder.getWebtoons().map { it -> it.getId() }, object : ViewModelCallback<List<Webtoon>> {
             // On successful fetch, update the RecyclerView with the fetched data.
             override fun onSuccess(result: List<Webtoon>) {
                 spinner.stop()

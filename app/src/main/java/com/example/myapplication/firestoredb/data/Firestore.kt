@@ -13,7 +13,7 @@ class Firestore {
         val res = ArrayList<WebtoonFolder>()
         db.collection("WebtoonFolder").whereEqualTo("uid", uid).get().addOnSuccessListener { result ->
             for (document in result) {
-                val folder = WebtoonFolder(document.data["title"].toString(), document.data["description"].toString(), document.id)
+                val folder = WebtoonFolder(document.data["title"].toString(), document.data["description"].toString(), document.id, document.data["uid"].toString(), document.data["permission"].toString() == "public")
                 val webtoonsIdList = document.data["webtoonsid"] as? ArrayList<Long>
 
                 // Add webtoons to the folder
@@ -34,7 +34,7 @@ class Firestore {
     fun getUserFavoriteWebtoonsFolder(userId: String, callback: FirestoreCallback<WebtoonFolder>) {
         db.collection("Favorite").document(userId).get().addOnSuccessListener { document ->
             val webtoonsIdList = document.data?.get("favorites") as? ArrayList<*>
-            val folder = WebtoonFolder("Favoris", "Les webtoons que vous avez ajouté en favoris", document.id, false)
+            val folder = WebtoonFolder("Favoris", "Les webtoons que vous avez ajouté en favoris", document.id, userId, false, false)
 
             // No favorite folder found
             if (webtoonsIdList.isNullOrEmpty()) {
@@ -43,13 +43,12 @@ class Firestore {
                     "favorites" to arrayListOf<Long>(),
                 )
 
-                db.collection("Favorite").document(FirebaseAuth.getInstance().currentUser?.uid.toString()).set(newFavorites)
-                    .addOnSuccessListener {
-                    callback.onSuccess(folder)
-                }.addOnFailureListener { exception ->
-                    Log.w("Failed", "Error while creating user favorites folder", exception)
-                    callback.onError(Exception("Error while creating user favorites folder"))
-                }
+                db.collection("Favorite").document(FirebaseAuth.getInstance().currentUser?.uid.toString()).set(newFavorites).addOnSuccessListener {
+                        callback.onSuccess(folder)
+                    }.addOnFailureListener { exception ->
+                        Log.w("Failed", "Error while creating user favorites folder", exception)
+                        callback.onError(Exception("Error while creating user favorites folder"))
+                    }
             } else {
                 // Put the webtoons id in the folder
                 for (i in 0..(webtoonsIdList.size).minus(1)) {

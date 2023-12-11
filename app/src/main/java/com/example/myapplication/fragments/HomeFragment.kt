@@ -28,13 +28,13 @@ import com.example.myapplication.models.WebtoonFolder
 import com.example.myapplication.viewModels.HomeViewModel
 import com.example.myapplication.viewModels.ViewModelCallback
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.api.Distribution.BucketOptions.Linear
 
 
 class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
     // Folders deletion mode attributes
     private var deleteFolderMode: Boolean = false
-    private var deleteFolderList: MutableList<WebtoonFolder> = mutableListOf()
+    private var personalFoldersToDeleteList: MutableList<WebtoonFolder> = mutableListOf()
+    private var sharedFoldersToDeleteList: MutableList<WebtoonFolder> = mutableListOf()
 
     // Other attributes
     private val viewModel: HomeViewModel = HomeViewModel()
@@ -45,13 +45,13 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         this.view = inflater.inflate(R.layout.fragment_home, container, false)
 
         // Set up the RecyclerView with a grid layout to display folders in 2 columns
         this.initRecyclerViewDisplay(
-            view, R.id.fragmentHome_itemsList, WebtoonsFoldersListAdapter(listOf<WebtoonFolder>(), this, R.layout.item_webtoon_folder), GridLayoutManager(context, 2)
+            view, R.id.fragmentHome_personalItemsList, WebtoonsFoldersListAdapter(listOf<WebtoonFolder>(), this, R.layout.item_webtoon_folder), GridLayoutManager(context, 2)
         )
 
         return this.view
@@ -60,13 +60,12 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
         val floatingCreationButton: FloatingActionButton = view.findViewById(R.id.fragmentHome_newFolderButton)
         val searchBar = view.findViewById<SearchView>(R.id.fragmentHome_searchBar)
         this.floatingDeleteButton = view.findViewById(R.id.fragmentHome_deleteFolderButton)
 
-        showDatabaseFolders()
-        showDatabasePublicFolders()
+        showDatabasePersonalFolders()
+        showDatabaseSharedFolders()
 
         // Folder creation popup
         floatingCreationButton.setOnClickListener(fun(_: View) {
@@ -74,14 +73,14 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
             builder.setTitle(getString(R.string.create_folder))
 
             // Set up the input field
-            val titleinput = EditText(this.context)
-            titleinput.inputType = InputType.TYPE_CLASS_TEXT
-            titleinput.hint = "Titre"
-            builder.setView(titleinput)
+            val titleInput = EditText(this.context)
+            titleInput.inputType = InputType.TYPE_CLASS_TEXT
+            titleInput.hint = getString(R.string.title)
+            builder.setView(titleInput)
 
             val descInput = EditText(this.context)
             descInput.inputType = InputType.TYPE_CLASS_TEXT
-            descInput.hint = "Description"
+            descInput.hint = getString(R.string.description)
             builder.setView(descInput)
 
             val radioGroup = RadioGroup(this.context)
@@ -89,12 +88,12 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
             radioGroup.gravity = Gravity.CENTER_HORIZONTAL
 
             val radioButton1 = RadioButton(this.context)
-            radioButton1.text = "Publique"
+            radioButton1.text = getString(R.string.shared)
             radioGroup.addView(radioButton1)
             radioGroup.check(radioButton1.id)
 
             val radioButton2 = RadioButton(this.context)
-            radioButton2.text = "Privée"
+            radioButton2.text = getString(R.string.unshared)
             radioGroup.addView(radioButton2)
 
             radioButton1.setOnClickListener() {
@@ -106,30 +105,29 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
                 radioButton2.isChecked = true
             }
 
-
             val layout = LinearLayout(this.context)
             layout.orientation = LinearLayout.VERTICAL
             layout.gravity = Gravity.CENTER
-            layout.addView(titleinput)
+            layout.addView(titleInput)
             layout.addView(descInput)
             layout.addView(radioGroup)
             builder.setView(layout)
 
             // Creation button
             builder.setPositiveButton(getString(R.string.create)) { _, _ ->
-                val folderTitle = titleinput.text.toString()
+                val folderTitle = titleInput.text.toString()
                 val folderDesc = descInput.text.toString()
                 val selectedOption = when (radioGroup.checkedRadioButtonId) {
                     radioButton1.id -> "public"
                     radioButton2.id -> "private"
-                    else -> "Ca n'arrive pas normalement..."
+                    else            -> "Ca n'arrive pas normalement..."
                 }
 
-                if(folderTitle.isEmpty()){
+                if (folderTitle.isEmpty()) {
                     Toast.makeText(context, getString(R.string.no_title), Toast.LENGTH_SHORT).show()
                 } else {
-                    this.viewModel.addFolderToDatabase(folderTitle,folderDesc,selectedOption)
-                    showDatabaseFolders()
+                    this.viewModel.addFolderToDatabase(folderTitle, folderDesc, selectedOption)
+                    showDatabasePersonalFolders()
                 }
             }
 
@@ -140,7 +138,7 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
             builder.show()
 
             // Set the focus on the input field
-            titleinput.requestFocus()
+            titleInput.requestFocus()
         })
 
         // Folder deletion popup
@@ -152,8 +150,8 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
 
             // Deletion button
             builder.setPositiveButton(getString(R.string.delete)) { _, _ ->
-                this.viewModel.deleteFolderFromDatabase(this.deleteFolderList)
-                showDatabaseFolders()
+                this.viewModel.deleteFolderFromDatabase(this.personalFoldersToDeleteList + this.sharedFoldersToDeleteList)
+                showDatabasePersonalFolders()
                 switchDeleteMode(false)
             }
 
@@ -172,16 +170,16 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
     }
 
     // Update the RecyclerView with the fetched data
-    private fun showDatabaseFolders() {
+    private fun showDatabasePersonalFolders() {
         // Show an empty list first to reset the previous datas
         setRecyclerViewContent(WebtoonsFoldersListAdapter(listOf<WebtoonFolder>(), this, R.layout.item_webtoon_folder))
 
         this.spinner = Spinner(this.requireView().findViewById(R.id.fragmentHome_loading))
 
-        viewModel.getWebtoonFoldersList(object : ViewModelCallback<List<WebtoonFolder>> {
+        viewModel.getPersonalWebtoonFoldersList(object : ViewModelCallback<List<WebtoonFolder>> {
             override fun onSuccess(result: List<WebtoonFolder>) {
                 Log.d("Webtoon folders fetch success", result.toString())
-                
+
                 // If there is no folder, display a toaster
                 if (result.isEmpty()) {
                     Toast.makeText(context, getString(R.string.no_folder), Toast.LENGTH_SHORT).show()
@@ -199,18 +197,18 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
         })
     }
 
-    private fun showDatabasePublicFolders() {
+    private fun showDatabaseSharedFolders() {
         // Show an empty list first to reset the previous datas
         val publicViewManager = GridLayoutManager(context, 2)
         val publicViewAdapter = WebtoonsFoldersListAdapter(listOf<WebtoonFolder>(), this, R.layout.item_webtoon_folder)
-        val publicRecyclerView = view.findViewById<RecyclerView>(R.id.fragmentHome_publicItemsList)
-        publicRecyclerView.apply{
+        val publicRecyclerView = view.findViewById<RecyclerView>(R.id.fragmentHome_sharedItemsList)
+        publicRecyclerView.apply {
             setHasFixedSize(true)
             layoutManager = publicViewManager
             adapter = publicViewAdapter
         }
 
-        viewModel.getWebtoonPublicFolderList(object : ViewModelCallback<List<WebtoonFolder>> {
+        viewModel.getWebtoonSharedFolderList(object : ViewModelCallback<List<WebtoonFolder>> {
             override fun onSuccess(result: List<WebtoonFolder>) {
 
                 // If there is no folder, display a toaster
@@ -227,6 +225,7 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
             }
         })
     }
+
     private fun searchQueryListener(): SearchView.OnQueryTextListener {
         return object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
@@ -257,12 +256,20 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
 
         // The folder needs to be selected or unselected but not opened
         if (deleteFolderMode) {
+            val selection = webtoonFolder.canBeDeleted() && personalFoldersToDeleteList.find { it.getDatabaseId() == webtoonFolder.getDatabaseId() } == null && sharedFoldersToDeleteList.find { it.getDatabaseId() == webtoonFolder.getDatabaseId() } == null
+            val folderIsInSharedRecyclerView = webtoonFolder.isPublic() && webtoonFolder.getAuthorId() != viewModel.connectedUser?.uid.toString()
+
             // If the folder is already selected, unselect it otherwise select it
-            setDeleteFolderSelection(position, webtoonFolder, webtoonFolder.canBeDeleted() && deleteFolderList.find { it.getDatabaseId() == webtoonFolder.getDatabaseId() } == null)
+            if (folderIsInSharedRecyclerView) {
+                setDeleteFolderSelection(R.id.fragmentHome_sharedItemsList, position, webtoonFolder, selection)
+            } else {
+                setDeleteFolderSelection(R.id.fragmentHome_personalItemsList, position, webtoonFolder, selection)
+            }
 
             // Hide the delete button if there is no more folder to delete
-            if (deleteFolderList.isEmpty())
+            if (personalFoldersToDeleteList.isEmpty() && sharedFoldersToDeleteList.isEmpty()) {
                 switchDeleteMode(false)
+            }
         } else {
             mainActivity?.changeFragment(WebtoonFolderDetailsFragment(webtoonFolder))
             mainActivity?.changeTitle(webtoonFolder.getTitle())
@@ -273,16 +280,25 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
     override fun onItemDraw(holder: WebtoonsRecyclerViewHolder, position: Int, item: Any?) {
         val webtoonFolder = item as WebtoonFolder
         holder.view.findViewById<TextView>(R.id.itemFolder_title).text = webtoonFolder.getTitle()
-        if(webtoonFolder.getTitle()=="Favoris") {
-            holder.view.findViewById<ImageView>(R.id.itemFolder_image)
-                .setImageResource(R.drawable.star_filled)
-        }
-        holder.itemView.setOnLongClickListener {
-            // Select the folder
-            setDeleteFolderSelection(position, webtoonFolder, webtoonFolder.canBeDeleted())
 
-            // Start the deletion mode
-            switchDeleteMode(deleteFolderList.isNotEmpty())
+        if (webtoonFolder.getTitle() == "Favoris") {
+            holder.view.findViewById<ImageView>(R.id.itemFolder_image).setImageResource(R.drawable.star_filled)
+        } else if (webtoonFolder.isPublic()) {
+            holder.view.findViewById<ImageView>(R.id.itemFolder_image).setImageResource(R.drawable.world)
+        } else {
+            holder.view.findViewById<ImageView>(R.id.itemFolder_image).setImageResource(R.drawable.lock)
+        }
+
+        // Long click on items
+        holder.itemView.setOnLongClickListener {
+            val folderIsInSharedRecyclerView = webtoonFolder.isPublic() && webtoonFolder.getAuthorId() != viewModel.connectedUser?.uid.toString()
+
+            // Select the folder
+            if (folderIsInSharedRecyclerView) {
+                setDeleteFolderSelection(R.id.fragmentHome_sharedItemsList, position, webtoonFolder, webtoonFolder.canBeDeleted())
+            } else {
+                setDeleteFolderSelection(R.id.fragmentHome_personalItemsList, position, webtoonFolder, webtoonFolder.canBeDeleted())
+            }
 
             true
         }
@@ -299,17 +315,36 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
         }
     }
 
-    private fun setDeleteFolderSelection(position:Int, webtoonFolder: WebtoonFolder, select: Boolean) {
+    private fun setDeleteFolderSelection(listId: Int, position: Int, webtoonFolder: WebtoonFolder, select: Boolean) {
+        val holder: RecyclerView.ViewHolder = if (listId == R.id.fragmentHome_personalItemsList) {
+            getRecyclerView().findViewHolderForAdapterPosition(position) as WebtoonsRecyclerViewHolder
+        } else {
+            view.findViewById<RecyclerView>(R.id.fragmentHome_sharedItemsList).findViewHolderForAdapterPosition(position) as WebtoonsRecyclerViewHolder
+        }
+
+        val folderIsInSharedRecyclerView = webtoonFolder.isPublic() && webtoonFolder.getAuthorId() != viewModel.connectedUser?.uid.toString()
+
         if (select) {
             // Change folder color to light blue and select it
-            val holder = getRecyclerView().findViewHolderForAdapterPosition(position) as WebtoonsRecyclerViewHolder
-            holder.view.setBackgroundResource(R.drawable.border_radius_blue)
-            deleteFolderList.add(webtoonFolder)
+            holder.itemView.setBackgroundResource(R.drawable.border_radius_blue)
+
+            if (folderIsInSharedRecyclerView) {
+                sharedFoldersToDeleteList.add(webtoonFolder)
+            } else {
+                personalFoldersToDeleteList.add(webtoonFolder)
+            }
         } else {
             // Change folder color to white and unselect it
-            val holder = getRecyclerView().findViewHolderForAdapterPosition(position) as WebtoonsRecyclerViewHolder
-            holder.view.setBackgroundResource(R.drawable.border_radius_white)
-            deleteFolderList.remove(webtoonFolder)
+            holder.itemView.setBackgroundResource(R.drawable.border_radius_white)
+
+            if (folderIsInSharedRecyclerView) {
+                sharedFoldersToDeleteList.remove(webtoonFolder)
+            } else {
+                personalFoldersToDeleteList.remove(webtoonFolder)
+            }
         }
+
+        // Start the deletion mode
+        switchDeleteMode(personalFoldersToDeleteList.isNotEmpty() || sharedFoldersToDeleteList.isNotEmpty())
     }
 }

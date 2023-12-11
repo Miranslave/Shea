@@ -12,19 +12,15 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.myapplication.image.ImageLoader
 import com.example.myapplication.R
-import com.example.myapplication.models.Webtoon
 import com.example.myapplication.activities.BaseActivity
 import com.example.myapplication.adapters.RecyclerViewEventsManager
 import com.example.myapplication.adapters.WebtoonsListAdapter
 import com.example.myapplication.adapters.WebtoonsRecyclerViewHolder
-import com.example.myapplication.firestoredb.data.Firestore
-import com.example.myapplication.firestoredb.data.FirestoreCallback
-import com.example.myapplication.models.WebtoonFolder
+import com.example.myapplication.image.ImageLoader
+import com.example.myapplication.models.Webtoon
 import com.example.myapplication.viewModels.LibraryViewModel
 import com.example.myapplication.viewModels.ViewModelCallback
-import com.google.firebase.auth.FirebaseAuth
 
 // This class represents a fragment in the application that displays a list of webtoons in a RecyclerView.
 class LibraryFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
@@ -34,8 +30,6 @@ class LibraryFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager
     // Initialize the ViewModel
     private var viewModel = LibraryViewModel()
     private lateinit var imageLoader: ImageLoader
-    private val firestore = Firestore()
-    val  uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
 
     // This method inflates the layout for this fragment and initializes the RecyclerView with a grid layout to display folders in 2 columns.
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -52,43 +46,17 @@ class LibraryFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager
 
         // Animate the spinner
         spinner = Spinner(this.requireView().findViewById(R.id.fragmentLibrary_loading))
-        firestore.getUserFavoriteWebtoonsFolder(uid, object: FirestoreCallback<WebtoonFolder> {
-            override fun onSuccess(result: WebtoonFolder) {
-                val webtoonIdList = mutableListOf<Int>()
-                println(result.getWebtoons().toString())
-                for(webtoon in result.getWebtoons()){
-                    webtoonIdList.add(webtoon.getId())
-                }
-                val vm = LibraryViewModel()
-                vm.setIdList(webtoonIdList)
-                vm.getWebtoonsList(object:ViewModelCallback<List<Webtoon>>{
-                    override fun onSuccess(result: List<Webtoon>) {
-                        if(result.isEmpty()){
-                            view.findViewById<ImageView>(R.id.fragmentLibrary_loading).setImageResource(R.drawable.star_filled)
-                        }else{
-                            setRecyclerViewContent(WebtoonsListAdapter(result, this@LibraryFragment, listDisplayLayout))
-                            spinner.stop()
-                        }
 
-                    }
-                    override fun onError(e: Throwable) {
-                        Log.d("Erreur", e.toString())
-                    }
-                })
-            }
-            override fun onError(e: Throwable) {
-                Log.d("Erreur", e.toString())
-            }
-
-        })
-
-        /*
         // Fetch the list of webtoons from the ViewModel
         this.viewModel.getWebtoonsList(object : ViewModelCallback<List<Webtoon>> {
             // On successful fetch, update the RecyclerView with the fetched data.
             override fun onSuccess(result: List<Webtoon>) {
-                setRecyclerViewContent(WebtoonsListAdapter(result, this@LibraryFragment, listDisplayLayout))
-                spinner.stop()
+                if (result.isEmpty()) {
+                    view.findViewById<ImageView>(R.id.fragmentLibrary_loading).setImageResource(R.drawable.star_filled)
+                } else {
+                    setRecyclerViewContent(WebtoonsListAdapter(result, this@LibraryFragment, listDisplayLayout))
+                    spinner.stop()
+                }
             }
 
             // On error, log the error and show a toast message.
@@ -97,7 +65,7 @@ class LibraryFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager
                 Toast.makeText(context, getString(R.string.display_error), Toast.LENGTH_SHORT).show()
                 spinner.stop()
             }
-        })*/
+        })
 
         // Listener for the display mode button (grid or list)
         val listDisplayModeButton = view.findViewById<ImageButton>(R.id.fragmentLibrary_listDisplayButton)
