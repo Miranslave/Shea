@@ -53,8 +53,13 @@ class HomeViewModel : CustomViewModel() {
         })
     }
 
-    fun addFolderToDatabase(title: String, description: String) {
-        val webtoonFolder = hashMapOf("uid" to connectedUser?.uid.toString(), "title" to title, "description" to description, "webtoonsid" to arrayListOf<Int>())
+    fun addFolderToDatabase(title: String, description: String, permission: String) {
+        val webtoonFolder = hashMapOf(
+            "uid" to connectedUser?.uid.toString(),
+            "title" to title,
+            "description" to description,
+            "permission" to permission,
+            "webtoonsid" to arrayListOf<Int>())
 
         db.collection("WebtoonFolder").document().set(webtoonFolder).addOnSuccessListener {
             Log.d(ContentValues.TAG, "DocumentSnapshot successfully written!")

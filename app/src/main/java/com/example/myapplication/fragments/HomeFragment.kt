@@ -9,6 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.LinearLayout
+import android.widget.RadioButton
+import android.widget.RadioGroup
 import android.widget.SearchView
 import android.widget.TextView
 import android.widget.Toast
@@ -23,6 +25,7 @@ import com.example.myapplication.models.WebtoonFolder
 import com.example.myapplication.viewModels.HomeViewModel
 import com.example.myapplication.viewModels.ViewModelCallback
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.api.Distribution.BucketOptions.Linear
 
 
 class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
@@ -77,19 +80,49 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
             descInput.hint = "Description"
             builder.setView(descInput)
 
+            val radioGroup = RadioGroup(this.context)
+            radioGroup.orientation = RadioGroup.HORIZONTAL
+
+            val radioButton1 = RadioButton(this.context)
+            radioButton1.text = "Publique"
+            radioGroup.addView(radioButton1)
+            radioGroup.check(radioButton1.id)
+
+            val radioButton2 = RadioButton(this.context)
+            radioButton2.text = "Privée"
+            radioGroup.addView(radioButton2)
+
+            radioButton1.setOnClickListener() {
+                radioButton2.isChecked = false
+                radioButton1.isChecked = true
+            }
+            radioButton2.setOnClickListener() {
+                radioButton1.isChecked = false
+                radioButton2.isChecked = true
+            }
+
+
             val layout = LinearLayout(this.context)
             layout.orientation = LinearLayout.VERTICAL
             layout.addView(titleinput)
             layout.addView(descInput)
+            layout.addView(radioGroup)
             builder.setView(layout)
 
             // Creation button
             builder.setPositiveButton(getString(R.string.create)) { _, _ ->
                 val folderTitle = titleinput.text.toString()
                 val folderDesc = descInput.text.toString()
-                this.viewModel.addFolderToDatabase(folderTitle,folderDesc)
+                val selectedOption = when (radioGroup.checkedRadioButtonId) {
+                    radioButton1.id -> "public"
+                    radioButton2.id -> "private"
+                    else -> "Ca n'arrive pas normalement..."
+                }
+
+                this.viewModel.addFolderToDatabase(folderTitle,folderDesc,selectedOption)
                 showDatabaseFolders()
             }
+
 
             // Cancel button
             builder.setNegativeButton(getString(R.string.abort)) { dialog, _ -> dialog.cancel() }
