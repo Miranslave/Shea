@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.os.Bundle
 import android.text.InputType
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -84,6 +85,7 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
 
             val radioGroup = RadioGroup(this.context)
             radioGroup.orientation = RadioGroup.HORIZONTAL
+            radioGroup.gravity = Gravity.CENTER_HORIZONTAL
 
             val radioButton1 = RadioButton(this.context)
             radioButton1.text = "Publique"
@@ -106,6 +108,7 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
 
             val layout = LinearLayout(this.context)
             layout.orientation = LinearLayout.VERTICAL
+            layout.gravity = Gravity.CENTER
             layout.addView(titleinput)
             layout.addView(descInput)
             layout.addView(radioGroup)
