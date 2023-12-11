@@ -18,6 +18,7 @@ import com.example.myapplication.adapters.WebtoonsRecyclerViewHolder
 import com.example.myapplication.image.ImageLoader
 import com.example.myapplication.models.Webtoon
 import com.example.myapplication.models.WebtoonFolder
+import com.example.myapplication.viewModels.HomeViewModel
 import com.example.myapplication.viewModels.LibraryViewModel
 import com.example.myapplication.viewModels.ViewModelCallback
 import com.google.android.material.textview.MaterialTextView
@@ -61,7 +62,7 @@ class WebtoonFolderDetailsFragment(private val folder: WebtoonFolder) : Fragment
         view.findViewById<AppCompatImageButton>(R.id.fragmentWebtoonFolderDetails_editButton).setOnClickListener {
             title.isEnabled = !title.isEnabled
             description.isEnabled = !description.isEnabled
-
+            HomeViewModel().changeFolderInfo(title.text.toString(),description.text.toString(),folder.getDatabaseId())
         }
 
         // Set the add webtoon button

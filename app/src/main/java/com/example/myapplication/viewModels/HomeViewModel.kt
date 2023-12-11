@@ -103,4 +103,19 @@ class HomeViewModel : CustomViewModel() {
             }
     }
 
+    fun changeFolderInfo(title: String, description: String, dbid: String) {
+        val updates = hashMapOf(
+            "title" to title,
+            "description" to description
+        )
+
+        db.collection("WebtoonFolder").document(dbid).update(updates as Map<String, Any>)
+            .addOnSuccessListener {
+                Log.d("WebtoonFolder", "Title and description successfully changed")
+            }
+            .addOnFailureListener{e->
+                Log.d("WebtoonFolder", "Title and description change failed", e)
+            }
+    }
+
 }
