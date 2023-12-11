@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.SearchView
 import android.widget.TextView
 import android.widget.Toast
@@ -68,12 +69,25 @@ class HomeFragment : FragmentRecyclerViewManager(), RecyclerViewEventsManager {
             // Set up the input field
             val titleinput = EditText(this.context)
             titleinput.inputType = InputType.TYPE_CLASS_TEXT
+            titleinput.hint = "Titre"
             builder.setView(titleinput)
+
+            val descInput = EditText(this.context)
+            descInput.inputType = InputType.TYPE_CLASS_TEXT
+            descInput.hint = "Description"
+            builder.setView(descInput)
+
+            val layout = LinearLayout(this.context)
+            layout.orientation = LinearLayout.VERTICAL
+            layout.addView(titleinput)
+            layout.addView(descInput)
+            builder.setView(layout)
 
             // Creation button
             builder.setPositiveButton(getString(R.string.create)) { _, _ ->
                 val folderTitle = titleinput.text.toString()
-                this.viewModel.addFolderToDatabase(folderTitle)
+                val folderDesc = descInput.text.toString()
+                this.viewModel.addFolderToDatabase(folderTitle,folderDesc)
                 showDatabaseFolders()
             }
 
